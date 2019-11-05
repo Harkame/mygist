@@ -1,62 +1,57 @@
 import json
-from scrapers import DixHuitScraper
 import time
-
-"""
-scraper = DixHuitScraper()
-
-start = None
-numbers = []
-missing_pages = []
-
-start = scraper.page(0)[0]
-
-page_counter = scraper.count()
-
-for index in range(0, page_counter):
-    try:
-        numbers.extend(scraper.page(index))
-        print(f"{index} - {page_counter}")
-        time.sleep(0.5)
-    except ConnectionError:
-        missing_pages.append(index)
-
-with open("./dixhuit.json", "w+") as out_file:
-    json.dump(numbers, out_file)
-
-print(f"start : {start}")
-
-print(f"missing_pages : {missing_pages}")
-
-"""
 
 filtered_numbers = []
 
-with open("dixhuit.json") as json_file:
+def is_valid_number(number):
+    if len(number) != 10:
+        return False
+
+    for char in number:
+        if not char.isdigit():
+            return False
+
+    if number[0] != "0":
+        return False
+
+    if number[0] == "0" and number[1] == "0":
+        return False
+
+    if number.count(number[0]) == len(number):
+        return False
+
+    return True
+
+def format_number(number):
+    formated_number = number
+
+    formated_number = formated_number.replace('.', '').strip().replace('+33', '0')
+
+    return formated_number
+
+with open("signal_arnaques.json") as json_file:
     numbers = json.load(json_file)
 
+    print(f"signal_arnaques : {len(numbers)}")
+
     for number in numbers:
+        formated_number = format_number(number)
 
-        if len(number) != 10:
-            continue
+        if is_valid_number(formated_number):
+            filtered_numbers.append(formated_number)
 
-        for char in number:
-            if not char.isdigit():
-                continue
+with open("arnaques_internet.json") as json_file:
+    numbers = json.load(json_file)
 
-        if number[0] != "0":
-            continue
+    print(f"arnaques_internet : {len(numbers)}")
 
-        if number[0] == "0" and number[1] == "0":
-            continue
+    for number in numbers:
+        formated_number = format_number(number)
 
-        if number.count(number[0]) == len(number):
-            continue
+        if is_valid_number(formated_number):
+            filtered_numbers.append(formated_number)
 
-        filtered_numbers.append(number)
+print(f"filtered_numbers : {len(filtered_numbers)}")
 
-    print(f"numbers : {len(numbers)}")
-    print(f"filtered_numbers : {len(filtered_numbers)}")
-
-    with open("./filtered_dixhuit.json", "w+") as out_file:
-        json.dump(filtered_numbers, out_file)
+with open("./filtered_merge.json", "w+") as out_file:
+    json.dump(filtered_numbers, out_file)
