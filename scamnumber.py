@@ -53,5 +53,9 @@ with open("arnaques_internet.json") as json_file:
 
 print(f"filtered_numbers : {len(filtered_numbers)}")
 
+filtered_numbers = list(set(filtered_numbers))
+
+print(f"filtered_numbers (no doublon): {len(filtered_numbers)}")
+
 with open("./filtered_merge.json", "w+") as out_file:
     json.dump(filtered_numbers, out_file)
