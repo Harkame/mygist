@@ -1,7 +1,9 @@
 import json
 import time
+import phonenumbers
 
 filtered_numbers = []
+
 
 def is_valid_number(number):
     if len(number) != 10:
@@ -22,12 +24,14 @@ def is_valid_number(number):
 
     return True
 
+
 def format_number(number):
     formated_number = number
 
-    formated_number = formated_number.replace('.', '').strip().replace('+33', '0')
+    formated_number = formated_number.replace(".", "").strip().replace("+33", "0")
 
     return formated_number
+
 
 with open("signal_arnaques.json") as json_file:
     numbers = json.load(json_file)
@@ -38,6 +42,16 @@ with open("signal_arnaques.json") as json_file:
         formated_number = format_number(number)
 
         if is_valid_number(formated_number):
+            parsed_number = phonenumbers.parse(formated_number, "FR")
+
+            formated_number = (
+                phonenumbers.format_number(
+                    parsed_number, phonenumbers.PhoneNumberFormat.INTERNATIONAL
+                )
+                .strip()
+                .replace(" ", "")
+            )
+
             filtered_numbers.append(formated_number)
 
 with open("arnaques_internet.json") as json_file:
@@ -49,6 +63,16 @@ with open("arnaques_internet.json") as json_file:
         formated_number = format_number(number)
 
         if is_valid_number(formated_number):
+            parsed_number = phonenumbers.parse(formated_number, "FR")
+
+            formated_number = (
+                phonenumbers.format_number(
+                    parsed_number, phonenumbers.PhoneNumberFormat.INTERNATIONAL
+                )
+                .strip()
+                .replace(" ", "")
+            )
+
             filtered_numbers.append(formated_number)
 
 print(f"filtered_numbers : {len(filtered_numbers)}")
