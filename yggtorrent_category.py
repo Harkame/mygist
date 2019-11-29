@@ -1,5 +1,82 @@
 import requests
 from bs4 import BeautifulSoup
+import sys
+
+categories = {
+    "all": {"code": "all"},
+    "film_video": {
+        "code": "2145",
+        "subcategories": {
+            {"all": "all"},
+            {"2178": "Animation"},
+            {"2179": "Animation S▒rie"},
+            {"2180": "Concert"},
+            {"2181": "Documentaire"},
+            {"2182": "Emission TV"},
+            {"2183": "Film"},
+            {"2184": "S▒rie TV"},
+            {"2185": "Spectacle"},
+            {"2186": "Sport"},
+            {"2187": "Vid▒o-clips"},
+        },
+    },
+    "application": {
+        "code": "2139",
+        "subcategories": {
+            {"all": "all"},
+            {"2177": "Autre"},
+            {"2176": "Formation"},
+            {"2171": "Linux"},
+            {"2172": "MacOS"},
+            {"2174": "Smartphone"},
+            {"2175": "Tablette"},
+            {"2173": "Windows"},
+        },
+    },
+    "jeux_video": {
+        "code": "2142",
+        "subcategories": {
+            {"all": "all"},
+            {"2177": "Autre"},
+            {"2176": "Formation"},
+            {"2171": "Linux"},
+            {"2172": "MacOS"},
+            {"2174": "Smartphone"},
+            {"2175": "Tablette"},
+            {"2173": "Windows"},
+        },
+    },
+    "ebook": {
+        "code": "2140",
+        "subcategories": {
+            {"all": "all"},
+            {"2151": "Audio"},
+            {"2152": "Bds"},
+            {"2153": "Comics"},
+            {"2154": "Livres"},
+            {"2155": "Mangas"},
+            {"2156": "Presse"},
+        },
+    },
+    "emulation": {
+        "code": "2141",
+        "subcategories": {{"all": "all"}, {"2157": "Emulateurs"}, {"2158": "Roms"},},
+    },
+    "gps": {
+        "code": "2143",
+        "subcategories": {
+            {"all": "all"},
+            {"2168": "Applications"},
+            {"2169": "Cartes"},
+            {"2170": "Divers"},
+        },
+    },
+}
+
+
+def string_to_code():
+    pass
+
 
 session = requests.session()
 
@@ -14,19 +91,25 @@ options = page.find("select", {"id": "categorie"}).find_all("option")
 categories = []
 
 for option in options:
-    categories.append(option["value"])
+    categories.append({option["value"]: option.text.lower().replace(" ", "_")})
 
-print(categories)
+# print(categories)
+
+print("----------------------------")
 
 subcat = []
 
 subc_selects = page.find("div", {"id": "sub_categorie_container"}).find_all("select")
 
 for subc_select in subc_selects:
+    subcop = []
     for subcoption in subc_select.find_all("option"):
-        subcat.append(subcoption["value"])
+        subcop.append({subcoption["value"]: subcoption.text})
 
-print(subcat)
+    subcat.append(subcop)
+
+for s in subcat:
+    print(s)
 
 """
 all=all
