@@ -3,74 +3,61 @@ from bs4 import BeautifulSoup
 import sys
 
 categories = {
-    "all": {"code": "all"},
-    "film_video": {
-        "code": "2145",
-        "subcategories": {
-            {"all": "all"},
-            {"2178": "Animation"},
-            {"2179": "Animation S▒rie"},
-            {"2180": "Concert"},
-            {"2181": "Documentaire"},
-            {"2182": "Emission TV"},
-            {"2183": "Film"},
-            {"2184": "S▒rie TV"},
-            {"2185": "Spectacle"},
-            {"2186": "Sport"},
-            {"2187": "Vid▒o-clips"},
-        },
-    },
-    "application": {
-        "code": "2139",
-        "subcategories": {
-            {"all": "all"},
-            {"2177": "Autre"},
-            {"2176": "Formation"},
-            {"2171": "Linux"},
-            {"2172": "MacOS"},
-            {"2174": "Smartphone"},
-            {"2175": "Tablette"},
-            {"2173": "Windows"},
-        },
-    },
-    "jeux_video": {
-        "code": "2142",
-        "subcategories": {
-            {"all": "all"},
-            {"2177": "Autre"},
-            {"2176": "Formation"},
-            {"2171": "Linux"},
-            {"2172": "MacOS"},
-            {"2174": "Smartphone"},
-            {"2175": "Tablette"},
-            {"2173": "Windows"},
-        },
-    },
-    "ebook": {
-        "code": "2140",
-        "subcategories": {
-            {"all": "all"},
-            {"2151": "Audio"},
-            {"2152": "Bds"},
-            {"2153": "Comics"},
-            {"2154": "Livres"},
-            {"2155": "Mangas"},
-            {"2156": "Presse"},
-        },
-    },
-    "emulation": {
-        "code": "2141",
-        "subcategories": {{"all": "all"}, {"2157": "Emulateurs"}, {"2158": "Roms"},},
-    },
-    "gps": {
-        "code": "2143",
-        "subcategories": {
-            {"all": "all"},
-            {"2168": "Applications"},
-            {"2169": "Cartes"},
-            {"2170": "Divers"},
-        },
-    },
+    "all": "all",
+    "film_video": "2145",
+    "application": "2139",
+    "jeux_video": "2142",
+    "ebook": "2140",
+    "emulation": "2141",
+    "gps": "2143",
+}
+
+sub_categories = {
+    "all": "all",
+    "Animation": "2178",
+    "Animation Serie": "2179",
+    "Concert": "2180",
+    "Documentaire": "2181",
+    "Emission TV": "2182",
+    "Film": "2183",
+    "Serie TV": "2184",
+    "Spectacle": "2185",
+    "Sport": "2186",
+    "Video-clips": "2187",
+    "Karaoke": "2147",
+    "Musique": "2148",
+    "Podcast Radio": "2150",
+    "Samples": "2149",
+    "Autre": "2177",
+    "Formation": "2176",
+    "Linux": "2171",
+    "MacOS": "2172",
+    "Smartphone": "2174",
+    "Tablette": "2175",
+    "Windows": "2173",
+    "Autre": "2167",
+    "Linux": "2159",
+    "MacOS": "2160",
+    "Microsoft": "2162",
+    "Nintendo": "2163",
+    "Smartphone": "2165",
+    "Sony": "2164",
+    "Tablette": "2166",
+    "Windows": "2161",
+    "Audio": "2151",
+    "Bds": "2152",
+    "Comics": "2153",
+    "Livres": "2154",
+    "Mangas": "2155",
+    "Presse": "2156",
+    "Emulateurs": "2157",
+    "Roms": "2158",
+    "Applications": "2168",
+    "Cartes": "2169",
+    "Divers": "2170",
+    "Films": "2189",
+    "Hentai": "2190",
+    "Images": "2191",
 }
 
 
@@ -86,121 +73,24 @@ response = session.get(
 
 page = BeautifulSoup(response.content, features="lxml")
 
-options = page.find("select", {"id": "categorie"}).find_all("option")
+option_tag = page.find("select", {"id": "categorie"}).find_all("option")
 
 categories = []
 
-for option in options:
+for option in option_tag:
     categories.append({option["value"]: option.text.lower().replace(" ", "_")})
 
 # print(categories)
 
 print("----------------------------")
 
-subcat = []
+sub_categories = {}
 
-subc_selects = page.find("div", {"id": "sub_categorie_container"}).find_all("select")
+sub_categories_select = page.find("div", {"id": "sub_categorie_container"}).find_all(
+    "select"
+)
 
-for subc_select in subc_selects:
+for sub_categorie_select in sub_categories_select:
     subcop = []
-    for subcoption in subc_select.find_all("option"):
-        subcop.append({subcoption["value"]: subcoption.text})
-
-    subcat.append(subcop)
-
-for s in subcat:
-    print(s)
-
-"""
-all=all
-movie_and_video=2145
-category=audio2139
-application=2144
-video_game=2142
-ebook=2140
-emulation=2141
-gps=2143
-
-
-
-
-		<li class="film">
-			<ul>
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2145&sub_category=all&do=search">Films & vidéos <span class="ico_film"></span></a></li>
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=game+of+thrones&description=&file=&uploader=&category=all&sub_category=&do=search&order=desc&sort=publish_date" style="color: #f1f1f1; font-weight: bold;"> Game Of Thrones <small style="color: #fd5656; font-size: 8px; font-family: verdana; text-transform: uppercase;">Tendance</small></a></li>
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2145&sub_category=2178&do=search">Animation</a></li>
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2145&sub_category=2179&do=search">Animation Série</a></li>
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2145&sub_category=2180&do=search"">Concert</a></li>
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2145&sub_category=2181&do=search"">Documentaire</a></li>
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2145&sub_category=2182&do=search"">Emission TV</a></li>
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2145&sub_category=2183&do=search"">Film</a></li>
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2145&sub_category=2184&do=search"">Série TV</a></li>
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2145&sub_category=2185&do=search"">Spectacle</a></li>
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2145&sub_category=2186&do=search"">Sport</a></li>
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2145&sub_category=2187&do=search"">Vidéo-clips</a></li>
-			</ul>
-		</li>
-		<li class="livre">
-			<ul>
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2140&sub_category=all&do=search">eBook <span class="ico_book"></span></a></li>
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2140&sub_category=2151&do=search">Audio</a></li>
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2140&sub_category=2152&do=search">BDS</a></li>
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2140&sub_category=2153&do=search">Comics</a></li>
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2140&sub_category=2154&do=search">Livres</a></li>
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2140&sub_category=2155&do=search">Manga</a></li>
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2140&sub_category=2156&do=search">Presse</a></li>
-			</ul>
-		</li>
-		<li class="audio">
-			<ul>
-
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2139&sub_category=all&do=search">Audio <span class="ico_music"></span></a></li>
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2139&sub_category=2147&do=search">Karaoké</a></li>
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2139&sub_category=2148&do=search">Musique</a></li>
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2139&sub_category=2150&do=search">Podcast Radio</a></li>
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2139&sub_category=2149&do=search">Samples</a></li>
-			</ul>
-		</li>
-				<li class="app">
-			<ul>
-
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2144&sub_category=all&do=search">Applications <span class="ico_windows"></span></a></li>
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2144&sub_category=2177&do=search">Autre</a></li>
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2144&sub_category=2176&do=search">Formation</a></li>
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2144&sub_category=2171&do=search">Linux</a></li>
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2144&sub_category=2172&do=search">MacOS</a></li>
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2144&sub_category=2174&do=search">Smartphone</a></li>
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2144&sub_category=2175&do=search">Tablette</a></li>
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2144&sub_category=2173&do=search">Windows</a></li>
-			</ul>
-		</li>
-		<li class="jeu">
-			<ul>
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2142&sub_category=all&do=search">Jeux vidéo <span class="ico_gamepad"></span></a></li>
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2142&sub_category=2167&do=search">Autre</a></li>
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2142&sub_category=2159&do=search">Linux</a></li>
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2142&sub_category=2160&do=search">MacOS</a></li>
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2142&sub_category=2162&do=search">Microsoft</a></li>
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2142&sub_category=2163&do=search">Nintendo</a></li>
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2142&sub_category=2165&do=search">Smartphone</a></li>
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2142&sub_category=2164&do=search">Sony</a></li>
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2142&sub_category=2166&do=search">Tablette</a></li>
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2142&sub_category=2161&do=search">Windows</a></li>
-			</ul>
-		</li>
-		<li class="emu">
-			<ul>
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2141&sub_category=all&do=search">Émulation <span class="ico_gamepad"></span></a></li>
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2141&sub_category=2157&do=search">Émulateur</a></li>
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2141&sub_category=2158&do=search">ROM/ISO</a></li>
-			</ul>
-		</li>
-		<li class="gps">
-			<ul>
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2143&sub_category=all&do=search">GPS <span class="ico_map"></span></a></li>
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2143&sub_category=2168&do=search">Applications</a></li>
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2143&sub_category=2169&do=search">Cartes</a></li>
-				<li><a  href="https://www2.yggtorrent.pe/engine/search?name=&description=&file=&uploader=&category=2143&sub_category=2170&do=search">Divers</a></li>
-			</ul>
-		</li>
-"""
+    for sub_categorie_option in sub_categorie_select.find_all("option"):
+        print(f"'{sub_categorie_option.text}' : '{sub_categorie_option['value']}', ")
