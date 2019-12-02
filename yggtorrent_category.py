@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import sys
+import time
 
 categories = {
     "all": "all",
@@ -70,7 +71,7 @@ session = requests.session()
 response = session.get(
     "https://www2.yggtorrent.pe/engine/search?name=walking+dead&description=&file=&uploader=&category=all&sub_category=all&do=search"
 )
-
+"""
 page = BeautifulSoup(response.content, features="lxml")
 
 option_tag = page.find("select", {"id": "categorie"}).find_all("option")
@@ -94,3 +95,13 @@ for sub_categorie_select in sub_categories_select:
     subcop = []
     for sub_categorie_option in sub_categorie_select.find_all("option"):
         print(f"'{sub_categorie_option.text}' : '{sub_categorie_option['value']}', ")
+"""
+
+for value in sub_categories.values():
+    print(value)
+
+    response = session.get(
+        f"https://www2.yggtorrent.pe/engine/category_fields?id={value}"
+    )
+
+    print(response.content)
