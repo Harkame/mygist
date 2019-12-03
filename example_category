@@ -1,0 +1,46 @@
+categories
+[{
+	"name" : "film",
+	"code" : "2174",
+	"subcategories" :
+	[{
+			"name" : "anime",
+			"code" : "2547",
+			"fields" :
+			[{
+        "name" : "langue",
+        "value" :
+        [
+          "francais",
+          "anglais",
+          "muet"
+        ]
+      },
+      {
+    			"name" : "3d",
+    			"code" : "2897",
+    			"fields" :
+    			[{
+            "name" : "langue",
+            "value" :
+            [
+              "francais",
+              "anglais",
+              "muet"
+            ]
+          }],
+    }]
+}]
+
+parameters = {
+	"category" : "film",
+	"subcategory" : "anime",
+	"fields" : {
+		"langue" : {
+			"francais",
+			"anglais"
+		}
+	}
+}
+
+scraper.search(parameters)

@@ -3,119 +3,346 @@ from bs4 import BeautifulSoup
 import sys
 import time
 import json
+import re
 
-categories = {
-    "all": "all",
-    "film_video": "2145",
-    "application": "2139",
-    "jeux_video": "2142",
-    "ebook": "2140",
-    "emulation": "2141",
-    "gps": "2143",
-}
-
-sub_categories = {
-    "all": "all",
-    "Animation": "2178",
-    "Animation Serie": "2179",
-    "Concert": "2180",
-    "Documentaire": "2181",
-    "Emission TV": "2182",
-    "Film": "2183",
-    "Serie TV": "2184",
-    "Spectacle": "2185",
-    "Sport": "2186",
-    "Video-clips": "2187",
-    "Karaoke": "2147",
-    "Musique": "2148",
-    "Podcast Radio": "2150",
-    "Samples": "2149",
-    "Autre": "2177",
-    "Formation": "2176",
-    "Linux": "2171",
-    "MacOS": "2172",
-    "Smartphone": "2174",
-    "Tablette": "2175",
-    "Windows": "2173",
-    "Autre": "2167",
-    "Linux": "2159",
-    "MacOS": "2160",
-    "Microsoft": "2162",
-    "Nintendo": "2163",
-    "Smartphone": "2165",
-    "Sony": "2164",
-    "Tablette": "2166",
-    "Windows": "2161",
-    "Audio": "2151",
-    "Bds": "2152",
-    "Comics": "2153",
-    "Livres": "2154",
-    "Mangas": "2155",
-    "Presse": "2156",
-    "Emulateurs": "2157",
-    "Roms": "2158",
-    "Applications": "2168",
-    "Cartes": "2169",
-    "Divers": "2170",
-    "Films": "2189",
-    "Hentai": "2190",
-    "Images": "2191",
-}
-
-
-def string_to_code():
-    pass
-
-
-session = requests.session()
-
-response = session.get(
-    "https://www2.yggtorrent.pe/engine/search?name=walking+dead&description=&file=&uploader=&category=all&sub_category=all&do=search"
-)
 """
-page = BeautifulSoup(response.content, features="lxml")
+categories = [
+    {
+        "name": "film_video",
+        "id": "2145",
+        "subcategories": [
+            {"name": "Animation", "id": "2178"},
+            {"name": "Animation Serie", "id": "2179"},
+            {"name": "Concert", "id": "2180"},
+            {"name": "Documentaire", "id": "2181"},
+            {"name": "Emission TV", "id": "2182"},
+            {"name": "Film", "id": "2183"},
+            {"name": "Serie TV", "id": "2184"},
+            {"name": "Spectacle", "id": "2185"},
+            {"name": "Sport", "id": "2186"},
+            {"name": "Video-clips", "id": "2187"},
+        ],
+    },
+    {
+        "name": "audio",
+        "id": "2139",
+        "subcategories": [
+            {"name": "Karaoke", "id": "2147"},
+            {"name": "Musique", "id": "2148"},
+            {"name": "Podcast Radio", "id": "2150"},
+            {"name": "Samples", "id": "2149"},
+        ],
+    },
+    {
+        "name": "application",
+        "id": "2139",
+        "subcategories": [
+            {"name": "Autre", "id": "2177"},
+            {"name": "Formation", "id": "2176"},
+            {"name": "Linux", "id": "2171"},
+            {"name": "MacOS", "id": "2172"},
+            {"name": "Smartphone", "id": "2174"},
+            {"name": "Tablette", "id": "2175"},
+            {"name": "Windows", "id": "2173"},
+        ],
+    },
+    {
+        "name": "jeux_video",
+        "id": "2142",
+        "subcategories": [
+            {"name": "Autre", "id": "2167"},
+            {"name": "Linux", "id": "2159"},
+            {"name": "MacOS", "id": "2160"},
+            {"name": "Microsoft", "id": "2162"},
+            {"name": "Nintendo", "id": "2163"},
+            {"name": "Smartphone", "id": "2165"},
+            {"name": "Sony", "id": "2164"},
+            {"name": "Tablette", "id": "2166"},
+            {"name": "Windows", "id": "2161"},
+        ],
+    },
+    {
+        "name": "ebook",
+        "id": "2140",
+        "subcategories": [
+            {"name": "Audio", "id": "2151"},
+            {"name": "Bds", "id": "2152"},
+            {"name": "Comics", "id": "2153"},
+            {"name": "Livres", "id": "2154"},
+            {"name": "Mangas", "id": "2155"},
+            {"name": "Presse", "id": "2156"},
+        ],
+    },
+    {
+        "name": "emulation",
+        "id": "2141",
+        "subcategories": [
+            {"name": "Emulateurs", "id": "2157"},
+            {"name": "Roms", "id": "2158"},
+        ],
+    },
+    {
+        "name": "gps",
+        "id": "2143",
+        "subcategories": [
+            {"name": "Applications", "id": "2168"},
+            {"name": "Cartes", "id": "2169"},
+            {"name": "Divers", "id": "2170"},
+        ],
+    },
+]
+"""
+categories = [
+    {
+        "name": "Films & vid▒os ",
+        "id": "2145",
+        "subcategories": [
+            {"name": " Game Of Thrones Tendance", "id": ""},
+            {"name": "Animation", "id": "2178"},
+            {"name": "Animation S▒rie", "id": "2179"},
+            {"name": "Concert", "id": "2180"},
+            {"name": "Documentaire", "id": "2181"},
+            {"name": "Emission TV", "id": "2182"},
+            {"name": "Film", "id": "2183"},
+            {"name": "S▒rie TV", "id": "2184"},
+            {"name": "Spectacle", "id": "2185"},
+            {"name": "Sport", "id": "2186"},
+            {"name": "Vid▒o-clips", "id": "2187"},
+            {"name": "eBook ", "id": "all"},
+            {"name": "Audio", "id": "2151"},
+            {"name": "BDS", "id": "2152"},
+            {"name": "Comics", "id": "2153"},
+            {"name": "Livres", "id": "2154"},
+            {"name": "Manga", "id": "2155"},
+            {"name": "Presse", "id": "2156"},
+            {"name": "Audio ", "id": "all"},
+            {"name": "Karaok▒", "id": "2147"},
+            {"name": "Musique", "id": "2148"},
+            {"name": "Podcast Radio", "id": "2150"},
+            {"name": "Samples", "id": "2149"},
+            {"name": "Applications ", "id": "all"},
+            {"name": "Autre", "id": "2177"},
+            {"name": "Formation", "id": "2176"},
+            {"name": "Linux", "id": "2171"},
+            {"name": "MacOS", "id": "2172"},
+            {"name": "Smartphone", "id": "2174"},
+            {"name": "Tablette", "id": "2175"},
+            {"name": "Windows", "id": "2173"},
+            {"name": "Jeux vid▒o ", "id": "all"},
+            {"name": "Autre", "id": "2167"},
+            {"name": "Linux", "id": "2159"},
+            {"name": "MacOS", "id": "2160"},
+            {"name": "Microsoft", "id": "2162"},
+            {"name": "Nintendo", "id": "2163"},
+            {"name": "Smartphone", "id": "2165"},
+            {"name": "Sony", "id": "2164"},
+            {"name": "Tablette", "id": "2166"},
+            {"name": "Windows", "id": "2161"},
+            {"name": "▒mulation ", "id": "all"},
+            {"name": "▒mulateur", "id": "2157"},
+            {"name": "ROM/ISO", "id": "2158"},
+            {"name": "GPS ", "id": "all"},
+            {"name": "Applications", "id": "2168"},
+            {"name": "Cartes", "id": "2169"},
+            {"name": "Divers", "id": "2170"},
+        ],
+    },
+    {
+        "name": "Films & vid▒os ",
+        "id": "2145",
+        "subcategories": [
+            {"name": " Game Of Thrones Tendance", "id": ""},
+            {"name": "Animation", "id": "2178"},
+            {"name": "Animation S▒rie", "id": "2179"},
+            {"name": "Concert", "id": "2180"},
+            {"name": "Documentaire", "id": "2181"},
+            {"name": "Emission TV", "id": "2182"},
+            {"name": "Film", "id": "2183"},
+            {"name": "S▒rie TV", "id": "2184"},
+            {"name": "Spectacle", "id": "2185"},
+            {"name": "Sport", "id": "2186"},
+            {"name": "Vid▒o-clips", "id": "2187"},
+        ],
+    },
+    {
+        "name": "eBook ",
+        "id": "2140",
+        "subcategories": [
+            {"name": "Audio", "id": "2151"},
+            {"name": "BDS", "id": "2152"},
+            {"name": "Comics", "id": "2153"},
+            {"name": "Livres", "id": "2154"},
+            {"name": "Manga", "id": "2155"},
+            {"name": "Presse", "id": "2156"},
+        ],
+    },
+    {
+        "name": "Audio ",
+        "id": "2139",
+        "subcategories": [
+            {"name": "Karaok▒", "id": "2147"},
+            {"name": "Musique", "id": "2148"},
+            {"name": "Podcast Radio", "id": "2150"},
+            {"name": "Samples", "id": "2149"},
+        ],
+    },
+    {
+        "name": "Applications ",
+        "id": "2144",
+        "subcategories": [
+            {"name": "Autre", "id": "2177"},
+            {"name": "Formation", "id": "2176"},
+            {"name": "Linux", "id": "2171"},
+            {"name": "MacOS", "id": "2172"},
+            {"name": "Smartphone", "id": "2174"},
+            {"name": "Tablette", "id": "2175"},
+            {"name": "Windows", "id": "2173"},
+        ],
+    },
+    {
+        "name": "Jeux vid▒o ",
+        "id": "2142",
+        "subcategories": [
+            {"name": "Autre", "id": "2167"},
+            {"name": "Linux", "id": "2159"},
+            {"name": "MacOS", "id": "2160"},
+            {"name": "Microsoft", "id": "2162"},
+            {"name": "Nintendo", "id": "2163"},
+            {"name": "Smartphone", "id": "2165"},
+            {"name": "Sony", "id": "2164"},
+            {"name": "Tablette", "id": "2166"},
+            {"name": "Windows", "id": "2161"},
+        ],
+    },
+    {
+        "name": "▒mulation ",
+        "id": "2141",
+        "subcategories": [
+            {"name": "▒mulateur", "id": "2157"},
+            {"name": "ROM/ISO", "id": "2158"},
+        ],
+    },
+    {
+        "name": "GPS ",
+        "id": "2143",
+        "subcategories": [
+            {"name": "Applications", "id": "2168"},
+            {"name": "Cartes", "id": "2169"},
+            {"name": "Divers", "id": "2170"},
+        ],
+    },
+]
 
+
+def extract_categories():
+    global categories
+    session = requests.session()
+
+    response = session.get(
+        "https://www2.yggtorrent.pe/engine/search?name=walking+dead&description=&file=&uploader=&category=all&sub_category=all&do=search"
+    )
+
+    page = BeautifulSoup(response.content, features="lxml")
+
+    left_menu = page.find("div", {"id": "cat"})
+
+    ul_tags = left_menu.find_all("ul")
+
+    for ul_tag in ul_tags:
+
+        category = {}
+
+        a_tags = ul_tag.find_all("a")
+
+        a_index = 0
+
+        for a_tag in a_tags:
+            href = a_tag["href"]
+
+            # print(a_tag.text)
+            # print(href)
+
+            id_category = substring(href, "category=", "&sub_category=")
+            id_subcategory = substring(href, "&sub_category=", "&do=search")
+
+            if a_index == 0:
+                category["name"] = a_tag.text
+                category["id"] = id_category
+                category["subcategories"] = []
+            else:
+
+                subcategory = {"name": a_tag.text, "id": id_subcategory}
+
+                category["subcategories"].append(subcategory)
+
+            a_index = a_index + 1
+
+        categories.append(category)
+
+
+"""
 option_tag = page.find("select", {"id": "categorie"}).find_all("option")
 
 categories = []
 
 for option in option_tag:
     categories.append({option["value"]: option.text.lower().replace(" ", "_")})
+"""
+
+
+def substring(string, begin, end):
+    result = re.search(f"{begin}(.*){end}", string)
+    return result.group(1)
+
+
+def extract_subcategegories():
+    global categories
+
+    session = requests.session()
+
+    response = session.get(
+        "https://www2.yggtorrent.pe/engine/search?name=walking+dead&description=&file=&uploader=&category=all&sub_category=all&do=search"
+    )
+    sub_categories = {}
+
+    sub_categories_select = page.find(
+        "div", {"id": "sub_categorie_container"}
+    ).find_all("select")
+
+    for sub_categorie_select in sub_categories_select:
+        subcop = []
+        for sub_categorie_option in sub_categorie_select.find_all("option"):
+            print(
+                f"'{sub_categorie_option.text}' : '{sub_categorie_option['value']}', "
+            )
+
+
+extract_categories()
+print(categories)
 
 # print(categories)
 
-print("----------------------------")
 
-sub_categories = {}
-
-sub_categories_select = page.find("div", {"id": "sub_categorie_container"}).find_all(
-    "select"
-)
-
-for sub_categorie_select in sub_categories_select:
-    subcop = []
-    for sub_categorie_option in sub_categorie_select.find_all("option"):
-        print(f"'{sub_categorie_option.text}' : '{sub_categorie_option['value']}', ")
+# print(categories)
 """
-"""
+
 i = 0
 
-for value in sub_categories.values():
-    print(value)
+for category in categories:
+    for subcategory in category["subcategories"]:
 
-    response = session.get(
-        f"https://www2.yggtorrent.pe/engine/category_fields?id={value}"
-    )
+        response = session.get(
+            f"https://www2.yggtorrent.pe/engine/category_fields?id={subcategory['id']}"
+        )
 
-    result = response.json()
+        result = response.json()
 
-    with open(f".\\categories\\{value}.json", "w+") as f:
-        json.dump(result, f)
-"""
+        with open(f".\\categories\\{subcategory['id']}.json", "w+") as file:
+            json.dump(result, file)
 
 
 def parse_field(field):
-    print(f"{f['name']} : {f['id']}")
+    print(f"{field['name']} : {field['id']}")
 
     if "values" in field:
         print("values : ")
@@ -123,16 +350,18 @@ def parse_field(field):
             print(f" - {value}")
 
 
-for value in sub_categories.values():
-    print(f"---------{value}------------")
-    with open(f"categories\\{value}.json") as json_file:
-        data = json.load(json_file)
+for category in categories:
+    for subcategory in category["subcategories"]:
+        print(f"--------{subcategory['name']}-{subcategory['id']}------------")
+        with open(f"categories\\{subcategory['id']}.json") as json_file:
+            json_data = json.load(json_file)
 
-        if "id" in data:
-            parse_field(data)
-        else:
-            for f in data:
-                if "id" not in f:
-                    continue
+            if "id" in json_data:
+                parse_field(json_data)
+            else:
+                for json_data_row in json_data:
+                    if "id" not in json_data_row:
+                        continue
 
-                parse_field(f)
+                    parse_field(json_data_row)
+"""
