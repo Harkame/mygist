@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import sys
 import time
+import json
 
 categories = {
     "all": "all",
@@ -96,6 +97,8 @@ for sub_categorie_select in sub_categories_select:
     for sub_categorie_option in sub_categorie_select.find_all("option"):
         print(f"'{sub_categorie_option.text}' : '{sub_categorie_option['value']}', ")
 """
+"""
+i = 0
 
 for value in sub_categories.values():
     print(value)
@@ -104,4 +107,32 @@ for value in sub_categories.values():
         f"https://www2.yggtorrent.pe/engine/category_fields?id={value}"
     )
 
-    print(response.content)
+    result = response.json()
+
+    with open(f".\\categories\\{value}.json", "w+") as f:
+        json.dump(result, f)
+"""
+
+
+def parse_field(field):
+    print(f"{f['name']} : {f['id']}")
+
+    if "values" in field:
+        print("values : ")
+        for value in field["values"]:
+            print(f" - {value}")
+
+
+for value in sub_categories.values():
+    print(f"---------{value}------------")
+    with open(f"categories\\{value}.json") as json_file:
+        data = json.load(json_file)
+
+        if "id" in data:
+            parse_field(data)
+        else:
+            for f in data:
+                if "id" not in f:
+                    continue
+
+                parse_field(f)
