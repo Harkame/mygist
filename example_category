@@ -43,4 +43,8 @@ parameters = {
 	}
 }
 
+categoryCode = categories
+subCategoryCode =
+fieldsCode =
+
 scraper.search(parameters)
