@@ -4,110 +4,24 @@ import sys
 import time
 import json
 import re
+import encodings
 
-"""
 categories = [
     {
-        "name": "film_video",
-        "id": "2145",
-        "subcategories": [
-            {"name": "Animation", "id": "2178"},
-            {"name": "Animation Serie", "id": "2179"},
-            {"name": "Concert", "id": "2180"},
-            {"name": "Documentaire", "id": "2181"},
-            {"name": "Emission TV", "id": "2182"},
-            {"name": "Film", "id": "2183"},
-            {"name": "Serie TV", "id": "2184"},
-            {"name": "Spectacle", "id": "2185"},
-            {"name": "Sport", "id": "2186"},
-            {"name": "Video-clips", "id": "2187"},
-        ],
-    },
-    {
-        "name": "audio",
-        "id": "2139",
-        "subcategories": [
-            {"name": "Karaoke", "id": "2147"},
-            {"name": "Musique", "id": "2148"},
-            {"name": "Podcast Radio", "id": "2150"},
-            {"name": "Samples", "id": "2149"},
-        ],
-    },
-    {
-        "name": "application",
-        "id": "2139",
-        "subcategories": [
-            {"name": "Autre", "id": "2177"},
-            {"name": "Formation", "id": "2176"},
-            {"name": "Linux", "id": "2171"},
-            {"name": "MacOS", "id": "2172"},
-            {"name": "Smartphone", "id": "2174"},
-            {"name": "Tablette", "id": "2175"},
-            {"name": "Windows", "id": "2173"},
-        ],
-    },
-    {
-        "name": "jeux_video",
-        "id": "2142",
-        "subcategories": [
-            {"name": "Autre", "id": "2167"},
-            {"name": "Linux", "id": "2159"},
-            {"name": "MacOS", "id": "2160"},
-            {"name": "Microsoft", "id": "2162"},
-            {"name": "Nintendo", "id": "2163"},
-            {"name": "Smartphone", "id": "2165"},
-            {"name": "Sony", "id": "2164"},
-            {"name": "Tablette", "id": "2166"},
-            {"name": "Windows", "id": "2161"},
-        ],
-    },
-    {
-        "name": "ebook",
-        "id": "2140",
-        "subcategories": [
-            {"name": "Audio", "id": "2151"},
-            {"name": "Bds", "id": "2152"},
-            {"name": "Comics", "id": "2153"},
-            {"name": "Livres", "id": "2154"},
-            {"name": "Mangas", "id": "2155"},
-            {"name": "Presse", "id": "2156"},
-        ],
-    },
-    {
-        "name": "emulation",
-        "id": "2141",
-        "subcategories": [
-            {"name": "Emulateurs", "id": "2157"},
-            {"name": "Roms", "id": "2158"},
-        ],
-    },
-    {
-        "name": "gps",
-        "id": "2143",
-        "subcategories": [
-            {"name": "Applications", "id": "2168"},
-            {"name": "Cartes", "id": "2169"},
-            {"name": "Divers", "id": "2170"},
-        ],
-    },
-]
-"""
-categories = [
-    {
-        "name": "Films & vid▒os ",
+        "name": "Films & vidéos ",
         "id": "2145",
         "subcategories": [
             {"name": " Game Of Thrones Tendance", "id": ""},
             {"name": "Animation", "id": "2178"},
-            {"name": "Animation S▒rie", "id": "2179"},
+            {"name": "Animation Série", "id": "2179"},
             {"name": "Concert", "id": "2180"},
             {"name": "Documentaire", "id": "2181"},
             {"name": "Emission TV", "id": "2182"},
             {"name": "Film", "id": "2183"},
-            {"name": "S▒rie TV", "id": "2184"},
+            {"name": "Série TV", "id": "2184"},
             {"name": "Spectacle", "id": "2185"},
             {"name": "Sport", "id": "2186"},
-            {"name": "Vid▒o-clips", "id": "2187"},
+            {"name": "Vidéo-clips", "id": "2187"},
             {"name": "eBook ", "id": "all"},
             {"name": "Audio", "id": "2151"},
             {"name": "BDS", "id": "2152"},
@@ -116,7 +30,7 @@ categories = [
             {"name": "Manga", "id": "2155"},
             {"name": "Presse", "id": "2156"},
             {"name": "Audio ", "id": "all"},
-            {"name": "Karaok▒", "id": "2147"},
+            {"name": "Karaoké", "id": "2147"},
             {"name": "Musique", "id": "2148"},
             {"name": "Podcast Radio", "id": "2150"},
             {"name": "Samples", "id": "2149"},
@@ -128,7 +42,7 @@ categories = [
             {"name": "Smartphone", "id": "2174"},
             {"name": "Tablette", "id": "2175"},
             {"name": "Windows", "id": "2173"},
-            {"name": "Jeux vid▒o ", "id": "all"},
+            {"name": "Jeux vidéo ", "id": "all"},
             {"name": "Autre", "id": "2167"},
             {"name": "Linux", "id": "2159"},
             {"name": "MacOS", "id": "2160"},
@@ -138,8 +52,8 @@ categories = [
             {"name": "Sony", "id": "2164"},
             {"name": "Tablette", "id": "2166"},
             {"name": "Windows", "id": "2161"},
-            {"name": "▒mulation ", "id": "all"},
-            {"name": "▒mulateur", "id": "2157"},
+            {"name": "Émulation ", "id": "all"},
+            {"name": "Émulateur", "id": "2157"},
             {"name": "ROM/ISO", "id": "2158"},
             {"name": "GPS ", "id": "all"},
             {"name": "Applications", "id": "2168"},
@@ -148,20 +62,20 @@ categories = [
         ],
     },
     {
-        "name": "Films & vid▒os ",
+        "name": "Films & vidéos ",
         "id": "2145",
         "subcategories": [
             {"name": " Game Of Thrones Tendance", "id": ""},
             {"name": "Animation", "id": "2178"},
-            {"name": "Animation S▒rie", "id": "2179"},
+            {"name": "Animation Série", "id": "2179"},
             {"name": "Concert", "id": "2180"},
             {"name": "Documentaire", "id": "2181"},
             {"name": "Emission TV", "id": "2182"},
             {"name": "Film", "id": "2183"},
-            {"name": "S▒rie TV", "id": "2184"},
+            {"name": "Série TV", "id": "2184"},
             {"name": "Spectacle", "id": "2185"},
             {"name": "Sport", "id": "2186"},
-            {"name": "Vid▒o-clips", "id": "2187"},
+            {"name": "Vidéo-clips", "id": "2187"},
         ],
     },
     {
@@ -180,7 +94,7 @@ categories = [
         "name": "Audio ",
         "id": "2139",
         "subcategories": [
-            {"name": "Karaok▒", "id": "2147"},
+            {"name": "Karaoké", "id": "2147"},
             {"name": "Musique", "id": "2148"},
             {"name": "Podcast Radio", "id": "2150"},
             {"name": "Samples", "id": "2149"},
@@ -200,7 +114,7 @@ categories = [
         ],
     },
     {
-        "name": "Jeux vid▒o ",
+        "name": "Jeux vidéo ",
         "id": "2142",
         "subcategories": [
             {"name": "Autre", "id": "2167"},
@@ -215,10 +129,10 @@ categories = [
         ],
     },
     {
-        "name": "▒mulation ",
+        "name": "Émulation ",
         "id": "2141",
         "subcategories": [
-            {"name": "▒mulateur", "id": "2157"},
+            {"name": "Émulateur", "id": "2157"},
             {"name": "ROM/ISO", "id": "2158"},
         ],
     },
@@ -265,13 +179,19 @@ def extract_categories():
             id_category = substring(href, "category=", "&sub_category=")
             id_subcategory = substring(href, "&sub_category=", "&do=search")
 
+            if id_category is None or id_subcategory is None:
+                continue
+
+            atext = decode(a_tag.text)
+
             if a_index == 0:
-                category["name"] = a_tag.text
+
+                category["name"] = atext
                 category["id"] = id_category
                 category["subcategories"] = []
             else:
 
-                subcategory = {"name": a_tag.text, "id": id_subcategory}
+                subcategory = {"name": atext, "id": id_subcategory}
 
                 category["subcategories"].append(subcategory)
 
@@ -288,6 +208,10 @@ categories = []
 for option in option_tag:
     categories.append({option["value"]: option.text.lower().replace(" ", "_")})
 """
+
+
+def decode(string):
+    return string.encode().decode("cp1254")
 
 
 def substring(string, begin, end):
@@ -320,10 +244,6 @@ def extract_subcategegories():
 extract_categories()
 print(categories)
 
-# print(categories)
-
-
-# print(categories)
 """
 
 i = 0
