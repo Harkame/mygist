@@ -211,7 +211,7 @@ for option in option_tag:
 
 
 def decode(string):
-    return string.encode().decode("cp1254")
+    return string.encode().decode("cp1252")
 
 
 def substring(string, begin, end):
@@ -246,9 +246,6 @@ def parse_field(field):
         print("not in")
         return None
 
-    print("---------------------------")
-    print(field)
-    print(f"{field['name']} : {field['id']}")
     item = {"name": decode(field["name"]), "id": decode(field["id"])}
 
     if "values" in field:
@@ -273,7 +270,7 @@ def download_fields():
 
             result = response.json()
 
-            with open(f".\\categories\\{subcategory['id']}.json", "w+") as file:
+            with open(f".\\categories\\{subcategory['id']}.json", "w") as file:
                 json.dump(result, file)
 
 
@@ -317,8 +314,6 @@ def extract_fields_from_files():
 
                 for json_data in result:
 
-                    print(subcategory["id"])
-
                     if "id" in json_data:
                         parsed_field = parse_field(json_data)
 
@@ -335,7 +330,7 @@ def extract_fields_from_files():
                                 subcategory["fields"].append(parsed_field)
 
 
-# extract_categories()
+extract_categories()
 # print(categories)
 print("--------")
 # download_fields()
