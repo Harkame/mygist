@@ -241,47 +241,105 @@ def extract_subcategegories():
             )
 
 
-extract_categories()
-print(categories)
-
-"""
-
-i = 0
-
-for category in categories:
-    for subcategory in category["subcategories"]:
-
-        response = session.get(
-            f"https://www2.yggtorrent.pe/engine/category_fields?id={subcategory['id']}"
-        )
-
-        result = response.json()
-
-        with open(f".\\categories\\{subcategory['id']}.json", "w+") as file:
-            json.dump(result, file)
-
-
 def parse_field(field):
+    if "id" not in field or "name" not in field:
+        print("not in")
+        return None
+
+    print("---------------------------")
+    print(field)
     print(f"{field['name']} : {field['id']}")
+    item = {"name": decode(field["name"]), "id": decode(field["id"])}
 
     if "values" in field:
-        print("values : ")
+        item["values"] = []
         for value in field["values"]:
-            print(f" - {value}")
+            item["values"].append(decode(value))
+
+    return item
 
 
-for category in categories:
-    for subcategory in category["subcategories"]:
-        print(f"--------{subcategory['name']}-{subcategory['id']}------------")
-        with open(f"categories\\{subcategory['id']}.json") as json_file:
-            json_data = json.load(json_file)
+def download_fields():
+    global categories
 
-            if "id" in json_data:
-                parse_field(json_data)
-            else:
-                for json_data_row in json_data:
-                    if "id" not in json_data_row:
-                        continue
+    session = requests.session()
 
-                    parse_field(json_data_row)
-"""
+    for category in categories:
+        for subcategory in category["subcategories"]:
+
+            response = session.get(
+                f"https://www2.yggtorrent.pe/engine/category_fields?id={subcategory['id']}"
+            )
+
+            result = response.json()
+
+            with open(f".\\categories\\{subcategory['id']}.json", "w+") as file:
+                json.dump(result, file)
+
+
+def extract_fields():
+    global categories
+
+    session = requests.session()
+
+    for category in categories:
+        for subcategory in category["subcategories"]:
+
+            response = session.get(
+                f"https://www2.yggtorrent.pe/engine/category_fields?id={subcategory['id']}"
+            )
+
+            result = response.json()
+
+            subcategory["fields"] = []
+
+            for json_data in result:
+
+                if "id" in json_data:
+                    subcategory["fields"].append(json_data)
+                else:
+                    for json_data_row in json_data:
+                        if "id" not in json_data_row:
+                            continue
+
+                        subcategory["fields"].append(json_data_row)
+
+
+def extract_fields_from_files():
+    global categories
+
+    for category in categories:
+        for subcategory in category["subcategories"]:
+            with open(f"categories\\{subcategory['id']}.json") as json_file:
+                result = json.load(json_file)
+
+                subcategory["fields"] = []
+
+                for json_data in result:
+
+                    print(subcategory["id"])
+
+                    if "id" in json_data:
+                        parsed_field = parse_field(json_data)
+
+                        if parsed_field:
+                            subcategory["fields"].append(parsed_field)
+                    else:
+                        for json_data_row in json_data:
+                            if "id" not in json_data_row:
+                                continue
+
+                            parsed_field = parse_field(json_data)
+
+                            if parsed_field:
+                                subcategory["fields"].append(parsed_field)
+
+
+# extract_categories()
+# print(categories)
+print("--------")
+# download_fields()
+extract_fields_from_files()
+print(categories)
+with open("categories.json", "w") as fp:
+    json.dump(categories, fp)
