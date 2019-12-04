@@ -5,147 +5,10 @@ import time
 import json
 import re
 import encodings
+import ftfy
+from ftfy import fix_text
 
-categories = [
-    {
-        "name": "Films & vidéos ",
-        "id": "2145",
-        "subcategories": [
-            {"name": " Game Of Thrones Tendance", "id": ""},
-            {"name": "Animation", "id": "2178"},
-            {"name": "Animation Série", "id": "2179"},
-            {"name": "Concert", "id": "2180"},
-            {"name": "Documentaire", "id": "2181"},
-            {"name": "Emission TV", "id": "2182"},
-            {"name": "Film", "id": "2183"},
-            {"name": "Série TV", "id": "2184"},
-            {"name": "Spectacle", "id": "2185"},
-            {"name": "Sport", "id": "2186"},
-            {"name": "Vidéo-clips", "id": "2187"},
-            {"name": "eBook ", "id": "all"},
-            {"name": "Audio", "id": "2151"},
-            {"name": "BDS", "id": "2152"},
-            {"name": "Comics", "id": "2153"},
-            {"name": "Livres", "id": "2154"},
-            {"name": "Manga", "id": "2155"},
-            {"name": "Presse", "id": "2156"},
-            {"name": "Audio ", "id": "all"},
-            {"name": "Karaoké", "id": "2147"},
-            {"name": "Musique", "id": "2148"},
-            {"name": "Podcast Radio", "id": "2150"},
-            {"name": "Samples", "id": "2149"},
-            {"name": "Applications ", "id": "all"},
-            {"name": "Autre", "id": "2177"},
-            {"name": "Formation", "id": "2176"},
-            {"name": "Linux", "id": "2171"},
-            {"name": "MacOS", "id": "2172"},
-            {"name": "Smartphone", "id": "2174"},
-            {"name": "Tablette", "id": "2175"},
-            {"name": "Windows", "id": "2173"},
-            {"name": "Jeux vidéo ", "id": "all"},
-            {"name": "Autre", "id": "2167"},
-            {"name": "Linux", "id": "2159"},
-            {"name": "MacOS", "id": "2160"},
-            {"name": "Microsoft", "id": "2162"},
-            {"name": "Nintendo", "id": "2163"},
-            {"name": "Smartphone", "id": "2165"},
-            {"name": "Sony", "id": "2164"},
-            {"name": "Tablette", "id": "2166"},
-            {"name": "Windows", "id": "2161"},
-            {"name": "Émulation ", "id": "all"},
-            {"name": "Émulateur", "id": "2157"},
-            {"name": "ROM/ISO", "id": "2158"},
-            {"name": "GPS ", "id": "all"},
-            {"name": "Applications", "id": "2168"},
-            {"name": "Cartes", "id": "2169"},
-            {"name": "Divers", "id": "2170"},
-        ],
-    },
-    {
-        "name": "Films & vidéos ",
-        "id": "2145",
-        "subcategories": [
-            {"name": " Game Of Thrones Tendance", "id": ""},
-            {"name": "Animation", "id": "2178"},
-            {"name": "Animation Série", "id": "2179"},
-            {"name": "Concert", "id": "2180"},
-            {"name": "Documentaire", "id": "2181"},
-            {"name": "Emission TV", "id": "2182"},
-            {"name": "Film", "id": "2183"},
-            {"name": "Série TV", "id": "2184"},
-            {"name": "Spectacle", "id": "2185"},
-            {"name": "Sport", "id": "2186"},
-            {"name": "Vidéo-clips", "id": "2187"},
-        ],
-    },
-    {
-        "name": "eBook ",
-        "id": "2140",
-        "subcategories": [
-            {"name": "Audio", "id": "2151"},
-            {"name": "BDS", "id": "2152"},
-            {"name": "Comics", "id": "2153"},
-            {"name": "Livres", "id": "2154"},
-            {"name": "Manga", "id": "2155"},
-            {"name": "Presse", "id": "2156"},
-        ],
-    },
-    {
-        "name": "Audio ",
-        "id": "2139",
-        "subcategories": [
-            {"name": "Karaoké", "id": "2147"},
-            {"name": "Musique", "id": "2148"},
-            {"name": "Podcast Radio", "id": "2150"},
-            {"name": "Samples", "id": "2149"},
-        ],
-    },
-    {
-        "name": "Applications ",
-        "id": "2144",
-        "subcategories": [
-            {"name": "Autre", "id": "2177"},
-            {"name": "Formation", "id": "2176"},
-            {"name": "Linux", "id": "2171"},
-            {"name": "MacOS", "id": "2172"},
-            {"name": "Smartphone", "id": "2174"},
-            {"name": "Tablette", "id": "2175"},
-            {"name": "Windows", "id": "2173"},
-        ],
-    },
-    {
-        "name": "Jeux vidéo ",
-        "id": "2142",
-        "subcategories": [
-            {"name": "Autre", "id": "2167"},
-            {"name": "Linux", "id": "2159"},
-            {"name": "MacOS", "id": "2160"},
-            {"name": "Microsoft", "id": "2162"},
-            {"name": "Nintendo", "id": "2163"},
-            {"name": "Smartphone", "id": "2165"},
-            {"name": "Sony", "id": "2164"},
-            {"name": "Tablette", "id": "2166"},
-            {"name": "Windows", "id": "2161"},
-        ],
-    },
-    {
-        "name": "Émulation ",
-        "id": "2141",
-        "subcategories": [
-            {"name": "Émulateur", "id": "2157"},
-            {"name": "ROM/ISO", "id": "2158"},
-        ],
-    },
-    {
-        "name": "GPS ",
-        "id": "2143",
-        "subcategories": [
-            {"name": "Applications", "id": "2168"},
-            {"name": "Cartes", "id": "2169"},
-            {"name": "Divers", "id": "2170"},
-        ],
-    },
-]
+from categories import categories
 
 
 def extract_categories():
@@ -173,13 +36,15 @@ def extract_categories():
         for a_tag in a_tags:
             href = a_tag["href"]
 
-            # print(a_tag.text)
-            # print(href)
-
             id_category = substring(href, "category=", "&sub_category=")
             id_subcategory = substring(href, "&sub_category=", "&do=search")
 
-            if id_category is None or id_subcategory is None:
+            if (
+                id_category is None
+                or id_subcategory is None
+                or len(id_category) == 0
+                or len(id_subcategory) == 0
+            ):
                 continue
 
             atext = decode(a_tag.text)
@@ -211,7 +76,7 @@ for option in option_tag:
 
 
 def decode(string):
-    return string.encode().decode("cp1252")
+    return string.encode().decode("cp1252").strip().replace(" ", "_")
 
 
 def substring(string, begin, end):
@@ -292,14 +157,12 @@ def extract_fields():
 
             for json_data in result:
 
-                if "id" in json_data:
+                if "id" in json_data and len(json_data["id"]) > 0:
                     subcategory["fields"].append(json_data)
                 else:
                     for json_data_row in json_data:
-                        if "id" not in json_data_row:
-                            continue
-
-                        subcategory["fields"].append(json_data_row)
+                        if "id" in json_data and len(json_data_row["id"]) > 0:
+                            subcategory["fields"].append(json_data_row)
 
 
 def extract_fields_from_files():
@@ -313,15 +176,23 @@ def extract_fields_from_files():
                 subcategory["fields"] = []
 
                 for json_data in result:
-
-                    if "id" in json_data:
+                    print("----------------------------")
+                    print(category["name"])
+                    print(category)
+                    print(subcategory)
+                    print(json_data)
+                    if (
+                        "id" in json_data
+                        and json_data["id"] is not None
+                        and len(json_data["id"]) > 0
+                    ):
                         parsed_field = parse_field(json_data)
 
                         if parsed_field:
                             subcategory["fields"].append(parsed_field)
                     else:
                         for json_data_row in json_data:
-                            if "id" not in json_data_row:
+                            if "id" not in json_data_row or len(json_data_row["id"]):
                                 continue
 
                             parsed_field = parse_field(json_data)
@@ -331,10 +202,14 @@ def extract_fields_from_files():
 
 
 extract_categories()
-# print(categories)
-print("--------")
-# download_fields()
-extract_fields_from_files()
-print(categories)
+"""
 with open("categories.json", "w") as fp:
     json.dump(categories, fp)
+
+
+# download_fields()
+extract_fields_from_files()
+
+with open("categories.py", "w") as fp:
+    json.dump(categories, fp)
+"""
