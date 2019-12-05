@@ -5,8 +5,6 @@ import time
 import json
 import re
 import encodings
-import ftfy
-from ftfy import fix_text
 
 from categories import categories
 
@@ -23,14 +21,14 @@ def extract_categories():
 
     left_menu = page.find("div", {"id": "cat"})
 
-    ul_tags = left_menu.find_all("ul")
+    ul_tags = left_menu.find_all(
+        "ul"
+    )  # , {"style": "color: rgb(201, 193, 189) !important;"})
 
     for ul_tag in ul_tags:
-
         category = {}
 
         a_tags = ul_tag.find_all("a")
-
         a_index = 0
 
         for a_tag in a_tags:
@@ -50,12 +48,10 @@ def extract_categories():
             atext = decode(a_tag.text)
 
             if a_index == 0:
-
                 category["name"] = atext
                 category["id"] = id_category
                 category["subcategories"] = []
             else:
-
                 subcategory = {"name": atext, "id": id_subcategory}
 
                 category["subcategories"].append(subcategory)
@@ -175,12 +171,10 @@ def extract_fields_from_files():
 
                 subcategory["fields"] = []
 
+                print(subcategory["id"])
                 for json_data in result:
-                    print("----------------------------")
-                    print(category["name"])
-                    print(category)
-                    print(subcategory)
                     print(json_data)
+
                     if (
                         "id" in json_data
                         and json_data["id"] is not None
@@ -202,14 +196,11 @@ def extract_fields_from_files():
 
 
 extract_categories()
-"""
-with open("categories.json", "w") as fp:
-    json.dump(categories, fp)
-
+# print(categories)
+# print(categories)
 
 # download_fields()
 extract_fields_from_files()
 
-with open("categories.py", "w") as fp:
-    json.dump(categories, fp)
-"""
+# with open("categories.py", "w") as fp:
+#    json.dump(categories, fp)
