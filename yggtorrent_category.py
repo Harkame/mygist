@@ -5,8 +5,9 @@ import time
 import json
 import re
 import encodings
-
+from unidecode import unidecode
 from categories import categories
+import unicodedata
 
 
 def extract_categories():
@@ -28,8 +29,6 @@ def extract_categories():
     for ul_tag in ul_tags:
         category = {}
 
-        print(ul_tag)
-
         a_tags = ul_tag.find_all("a")
         a_index = 0
 
@@ -47,11 +46,9 @@ def extract_categories():
             ):
                 continue
 
-            print(href)
             atext = decode(a_tag.text)
 
             if a_index == 0:
-                print(f"category : {atext}")
                 category["name"] = atext
                 category["id"] = id_category
                 category["subcategories"] = []
@@ -76,7 +73,7 @@ for option in option_tag:
 
 
 def decode(string):
-    return string.encode().decode("cp1252").strip().replace(" ", "_")
+    return strip_accents(string.strip().replace(" ", "_")).lower()
 
 
 def substring(string, begin, end):
@@ -197,16 +194,65 @@ def extract_fields_from_files():
                                 subcategory["fields"].append(parsed_field)
 
 
-# extract_categories()
-# print(categories)
-# print(categories)
-# print(categories)
+def strip_accents(text):
 
-# download_fields()
-# extract_fields_from_files()
+    try:
+        text = unicode(text, "utf-8")
+    except NameError:  # unicode is a default on python 3
+        pass
 
-# with open("categories.py", "w") as fp:
-# json.dump(categories, fp)
+    text = unicodedata.normalize("NFD", text).encode("ascii", "ignore").decode("utf-8")
 
-for category in categories:
-    print(category["name"].lower())
+    return str(text)
+
+
+"""
+extract_categories()
+
+download_fields()
+extract_fields_from_files()
+
+with open("categories.py", "w") as fp:
+    json.dump(categories, fp)
+"""
+
+
+def search(parameters):
+    id_category = "all"
+    id_subcategory = "all"
+    fields_index = []
+
+    if "category" in parameters:
+        for category in categories:
+            if parameters["category"] == category["name"]:
+                id_category = category["id"]
+
+                if "subcategory" in parameters:
+                    for subcategory in category["subcategories"]:
+                        if parameters["subcategory"] == subcategory["name"]:
+                            id_subcategory = subcategory["id"]
+
+                            if "fields" in parameters:
+                                for key, values in parameters["fields"].items():
+                                    for field in subcategory["fields"]:
+                                        if key == field["name"]:
+                                            for searched_value in values:
+                                                for index, value in enumerate(
+                                                    field["values"]
+                                                ):
+                                                    if searched_value == value:
+                                                        fields_index.append(index)
+
+    print(id_category)
+    print(id_subcategory)
+    print(fields_index)
+
+
+search(
+    {
+        "category": "films_&_videos",
+        "subcategory": "animation",
+        "fields": {"langue": {"anglais", "vostfr"}},
+    }
+)
+# print(categories["name"])
