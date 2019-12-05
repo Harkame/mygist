@@ -21,12 +21,14 @@ def extract_categories():
 
     left_menu = page.find("div", {"id": "cat"})
 
-    ul_tags = left_menu.find_all(
+    ul_tags = left_menu.find("ul").find_all(
         "ul"
     )  # , {"style": "color: rgb(201, 193, 189) !important;"})
 
     for ul_tag in ul_tags:
         category = {}
+
+        print(ul_tag)
 
         a_tags = ul_tag.find_all("a")
         a_index = 0
@@ -45,9 +47,11 @@ def extract_categories():
             ):
                 continue
 
+            print(href)
             atext = decode(a_tag.text)
 
             if a_index == 0:
+                print(f"category : {atext}")
                 category["name"] = atext
                 category["id"] = id_category
                 category["subcategories"] = []
@@ -171,12 +175,10 @@ def extract_fields_from_files():
 
                 subcategory["fields"] = []
 
-                print(subcategory["id"])
                 for json_data in result:
-                    print(json_data)
-
                     if (
                         "id" in json_data
+                        and "name" in json_data
                         and json_data["id"] is not None
                         and len(json_data["id"]) > 0
                     ):
@@ -195,12 +197,16 @@ def extract_fields_from_files():
                                 subcategory["fields"].append(parsed_field)
 
 
-extract_categories()
+# extract_categories()
+# print(categories)
 # print(categories)
 # print(categories)
 
 # download_fields()
-extract_fields_from_files()
+# extract_fields_from_files()
 
 # with open("categories.py", "w") as fp:
-#    json.dump(categories, fp)
+# json.dump(categories, fp)
+
+for category in categories:
+    print(category["name"].lower())
