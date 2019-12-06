@@ -110,6 +110,9 @@ def parse_field(field):
 
     item = {"name": decode(field["name"]), "id": decode(field["id"])}
 
+    if "multiple" in field:
+        item["multiple"] = field["multiple"]
+
     if "values" in field:
         item["values"] = []
         for value in field["values"]:
@@ -153,13 +156,25 @@ def extract_fields():
             subcategory["fields"] = []
 
             for json_data in result:
+                if (
+                    "id" in json_data
+                    and "name" in json_data
+                    and json_data["id"] is not None
+                    and len(json_data["id"]) > 0
+                ):
+                    parsed_field = parse_field(json_data)
 
-                if "id" in json_data and len(json_data["id"]) > 0:
-                    subcategory["fields"].append(json_data)
+                    if parsed_field:
+                        subcategory["fields"].append(parsed_field)
                 else:
                     for json_data_row in json_data:
-                        if "id" in json_data and len(json_data_row["id"]) > 0:
-                            subcategory["fields"].append(json_data_row)
+                        if "id" not in json_data_row or len(json_data_row["id"]):
+                            continue
+
+                        parsed_field = parse_field(json_data)
+
+                        if parsed_field:
+                            subcategory["fields"].append(parsed_field)
 
 
 def extract_fields_from_files():
@@ -247,10 +262,7 @@ def search(parameters):
     print(id_subcategory)
     print(fields_index)
 
-https://www2.yggtorrent.ws/engine/search?name=walking+dead&description=&file=&uploader=&category=2145&sub_category=2184&do=search
-https://www2.yggtorrent.ws/engine/search?name=walking+dead&description=&file=&uploader=&category=2145&sub_category=2178&option_langue%3Amultiple[]=1&do=search
-https://www2.yggtorrent.ws/engine/search?name=walking+dead&description=&file=&uploader=&category=2145&sub_category=2178&option_langue%3Amultiple[]=2&do=search
-https://www2.yggtorrent.ws/engine/search?name=walking+dead&description=&file=&uploader=&category=2145&sub_category=2178&option_langue%3Amultiple[]=1&option_langue%3Amultiple[]=2&do=search
+
 search(
     {
         "category": "films_&_videos",
@@ -258,4 +270,10 @@ search(
         "fields": {"langue": {"anglais", "vostfr"}},
     }
 )
+
+extract_categories()
+extract_fields_from_files()
+
+with open(f".\\categories.py", "w") as file:
+    json.dump(categories, file)
 # print(categories["name"])
