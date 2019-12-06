@@ -103,25 +103,25 @@ def extract_subcategegories():
             )
 
 
-def parse_field(field):
-    if "id" not in field or "name" not in field:
+def parse_option(option):
+    if "id" not in option or "name" not in option:
         print("not in")
         return None
 
-    item = {"name": decode(field["name"]), "id": decode(field["id"])}
+    item = {"name": decode(option["name"]), "id": decode(option["id"])}
 
-    if "multiple" in field:
-        item["multiple"] = field["multiple"]
+    if "multiple" in option:
+        item["multiple"] = option["multiple"]
 
-    if "values" in field:
+    if "values" in option:
         item["values"] = []
-        for value in field["values"]:
+        for value in option["values"]:
             item["values"].append(decode(value))
 
     return item
 
 
-def download_fields():
+def download_options():
     global categories
 
     session = requests.session()
@@ -139,7 +139,7 @@ def download_fields():
                 json.dump(result, file)
 
 
-def extract_fields():
+def extract_options():
     global categories
 
     session = requests.session()
@@ -153,7 +153,7 @@ def extract_fields():
 
             result = response.json()
 
-            subcategory["fields"] = []
+            subcategory["options"] = []
 
             for json_data in result:
                 if (
@@ -162,22 +162,22 @@ def extract_fields():
                     and json_data["id"] is not None
                     and len(json_data["id"]) > 0
                 ):
-                    parsed_field = parse_field(json_data)
+                    parsed_option = parse_option(json_data)
 
-                    if parsed_field:
-                        subcategory["fields"].append(parsed_field)
+                    if parsed_option:
+                        subcategory["options"].append(parsed_option)
                 else:
                     for json_data_row in json_data:
                         if "id" not in json_data_row or len(json_data_row["id"]):
                             continue
 
-                        parsed_field = parse_field(json_data)
+                        parsed_option = parse_option(json_data)
 
-                        if parsed_field:
-                            subcategory["fields"].append(parsed_field)
+                        if parsed_option:
+                            subcategory["options"].append(parsed_option)
 
 
-def extract_fields_from_files():
+def extract_options_from_files():
     global categories
 
     for category in categories:
@@ -185,7 +185,7 @@ def extract_fields_from_files():
             with open(f"categories\\{subcategory['id']}.json") as json_file:
                 result = json.load(json_file)
 
-                subcategory["fields"] = []
+                subcategory["options"] = []
 
                 for json_data in result:
                     if (
@@ -194,19 +194,19 @@ def extract_fields_from_files():
                         and json_data["id"] is not None
                         and len(json_data["id"]) > 0
                     ):
-                        parsed_field = parse_field(json_data)
+                        parsed_option = parse_option(json_data)
 
-                        if parsed_field:
-                            subcategory["fields"].append(parsed_field)
+                        if parsed_option:
+                            subcategory["options"].append(parsed_option)
                     else:
                         for json_data_row in json_data:
                             if "id" not in json_data_row or len(json_data_row["id"]):
                                 continue
 
-                            parsed_field = parse_field(json_data)
+                            parsed_option = parse_option(json_data)
 
-                            if parsed_field:
-                                subcategory["fields"].append(parsed_field)
+                            if parsed_option:
+                                subcategory["options"].append(parsed_option)
 
 
 def strip_accents(text):
@@ -224,8 +224,8 @@ def strip_accents(text):
 """
 extract_categories()
 
-download_fields()
-extract_fields_from_files()
+download_options()
+extract_options_from_files()
 
 with open("categories.py", "w") as fp:
     json.dump(categories, fp)
@@ -235,7 +235,7 @@ with open("categories.py", "w") as fp:
 def search(parameters):
     id_category = "all"
     id_subcategory = "all"
-    fields_index = []
+    options_index = []
 
     if "category" in parameters:
         for category in categories:
@@ -247,32 +247,32 @@ def search(parameters):
                         if parameters["subcategory"] == subcategory["name"]:
                             id_subcategory = subcategory["id"]
 
-                            if "fields" in parameters:
-                                for key, values in parameters["fields"].items():
-                                    for field in subcategory["fields"]:
-                                        if key == field["name"]:
+                            if "options" in parameters:
+                                for key, values in parameters["options"].items():
+                                    for option in subcategory["options"]:
+                                        if key == option["name"]:
                                             for searched_value in values:
                                                 for index, value in enumerate(
-                                                    field["values"]
+                                                    option["values"]
                                                 ):
                                                     if searched_value == value:
-                                                        fields_index.append(index)
+                                                        options_index.append(index)
 
     print(id_category)
     print(id_subcategory)
-    print(fields_index)
+    print(options_index)
 
 
 search(
     {
         "category": "films_&_videos",
         "subcategory": "animation",
-        "fields": {"langue": {"anglais", "vostfr"}},
+        "options": {"langue": {"anglais", "vostfr"}},
     }
 )
 
 extract_categories()
-extract_fields_from_files()
+extract_options_from_files()
 
 with open(f".\\categories.py", "w") as file:
     json.dump(categories, file)
