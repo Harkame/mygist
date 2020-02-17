@@ -1,0 +1,5 @@
+games:
+- url: https://stackoverflow.com/questions/16710290/how-to-delete-a-module-in-android-studio
+  version: '2.16'
+- url: https://github.com/thoughtbot/expandable-recycler-view
+  version: '3.30'
