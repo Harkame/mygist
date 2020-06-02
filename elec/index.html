@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Hello World!</title>
+    <link rel="stylesheet" href="./contents/bootstrap.min.css" />
+    <link rel="stylesheet" href="main.css" />
+  </head>
+
+  <body>
+    <h1>Hello World!</h1>
+    We are using node
+    <script>document.write(process.versions.node)</script>, Chrome <script>document.write(process.versions.chrome)</script>, and Electron <script>document.write(process.versions.electron)</script>.
+    <ul id="models">
+
+    </ul>
+
+    <button id="btn" type="button" class="btn btn-primary"></button>
+    <p id="syncReponse"></p>
+    <script>let $ = require('jquery');</script>
+    <script src="./myscript.js"></script>
+    <script>require('popper.js');</script>
+    <script>require('bootstrap');</script>
+  </body>
+</html>
