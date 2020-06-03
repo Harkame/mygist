@@ -5,21 +5,13 @@
     <title>Hello World!</title>
     <link rel="stylesheet" href="./contents/bootstrap.min.css" />
     <link rel="stylesheet" href="main.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   </head>
-
   <body>
-    <h1>Hello World!</h1>
-    We are using node
-    <script>document.write(process.versions.node)</script>, Chrome <script>document.write(process.versions.chrome)</script>, and Electron <script>document.write(process.versions.electron)</script>.
     <ul id="models">
-
     </ul>
-
-    <button id="btn" type="button" class="btn btn-primary"></button>
-    <p id="syncReponse"></p>
-    <script>let $ = require('jquery');</script>
-    <script src="./myscript.js"></script>
-    <script>require('popper.js');</script>
-    <script>require('bootstrap');</script>
+    <button id="btn" type="button" class="btn btn-primary"><i class="fa fa-refresh"></i> Refresh</button>
   </body>
 </html>
+
+<script src="myscript.js"></script>
