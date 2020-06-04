@@ -48,8 +48,8 @@ function createWindow ()
 
   mainWindow.webContents.on('did-finish-load', function()
   {
-    mainWindow.openDevTools();
-    devToolsOpen = true;
+    //mainWindow.openDevTools();
+    //devToolsOpen = true;
     /*
     document.querySelector('#btn').addEventListener('click', () => {
         getData()
@@ -66,81 +66,20 @@ function createWindow ()
   //mainWindow.webContents.on("devtools-opened", () => { mainWindow.webContents.closeDevTools(); });
 }
 
-const template = [
-   {
-      label: 'Edit',
-      submenu: [
-         {
-            role: 'undo'
-         },
-         {
-            role: 'redo'
-         },
-         {
-            type: 'separator'
-         },
-         {
-            role: 'cut'
-         },
-         {
-            role: 'copy'
-         },
-         {
-            role: 'paste'
-         }
-      ]
-   },
-
-   {
-      label: 'View',
-      submenu: [
-         {
-            role: 'reload'
-         },
-         {
-            role: 'toggledevtools'
-         },
-         {
-            type: 'separator'
-         },
-         {
-            role: 'resetzoom'
-         },
-         {
-            role: 'zoomin'
-         },
-         {
-            role: 'zoomout'
-         },
-         {
-            type: 'separator'
-         },
-         {
-            role: 'togglefullscreen'
-         }
-      ]
-   },
-
-   {
-      role: 'window',
-      submenu: [
-         {
-            role: 'minimize'
-         },
-         {
-            role: 'close'
-         }
-      ]
-   },
-
-   {
-      role: 'help',
-      submenu: [
-         {
-            label: 'Lezdzzdarn More'
-         }
-      ]
-   }
+const template =
+[
+  {
+    label: 'Models',
+  },
+  {
+    label: 'Settings',
+    submenu:
+    [
+      {
+        role: 'About'
+      }
+    ]
+  },
 ]
 
 const menu = Menu.buildFromTemplate(template)
