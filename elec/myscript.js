@@ -1,5 +1,8 @@
 const ipc = require('electron').ipcRenderer
+const configHelper = require('./lib/config_helper.js')
 let $ = require('jquery');
+const constants = require('./lib/constants.js')
+
 //require('./models/model.js')
 /*
 let notifyBtn = document.getElementById("btn");
@@ -54,28 +57,33 @@ function getModels() {
 
     //<svg class="bd-placeholder-img" width="100%" height="250" xmlns="http://www.w3.org/2000/svg" aria-label="Placeholder: Image" preserveAspectRatio="xMidYMid slice" role="img"><title>Placeholder</title><rect width="100%" height="100%" fill="#868e96"/><text x="50%" y="50%" fill="#dee2e6" dy=".3em">Image</text></svg>
     $('#models').append(`
-      <div class="card mb-3" style="max-width: 540px;">
+      <div class="card mb-3" style="max-width: 600px;">
         <div class="row no-gutters">
           <div class="col-md-4">
             <img class="col-sm rounded" src="mario.jpg">
           </div>
           <div class="col-md-4">
             <div class="card-body">
-              <h5 class="card-title">Card title</h5>
+              <h5 class="card-title">${model.name}</h5>
             </div>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-3">
             <div class="card-body">
-              <div class="col-sm state state-${model.state}">
-                <p>Available<p>
-              </div>
+              <div class="p-3 mb-2 text-white state state-${model.state}">.bg-primary</div>
               <button type="button" class="btn btn-primary"><i class="fa fa-video-camera"></i> Action</button>
-              <button id="see-${model.id} "type="button" class="btn btn-primary"><i class="fa fa-eye"></i> See</button>
+              <button style="margin-top:5px;" id="see-${model.id}" type="button" class="btn btn-primary"><i class="fa fa-eye"></i> See</button>
             </div>
           </div>
         </div>
       </div>
     `);
+
+    $(`#action-${model.id}`).on('click', function(event)
+    {
+      console.log("onclick");
+
+      shell.openExternal('https://github.com');
+    });
 
     $(`#see-${model.id}`).on('click', function(event)
     {
@@ -103,6 +111,42 @@ class Model {
     console.log('Hello, my name is ' + this.name + ', I have ID: ' + this.id);
   }
 }
+
+
+config = configHelper.readConfig(constants.DEFAULT_CONFIG_PATH);
+destinationPath = config[`destinationPath`];
+
+if(!fs.existsSync(destinationPath))
+{
+  fs.mkdirSync(destinationPath, 0766, function(error){
+      if(error)
+          console.error(error);
+  });
+}
+
+let refreshIntervalId = setInterval(main, 30000);
+
+function main()
+{
+  console.log(`---------------`);
+
+  config = configHelper.readConfig(constants.DEFAULT_CONFIG_PATH);
+
+  request({url : searchUrl, json: true}, function(error, result, json)
+  {
+    if(error)
+    {
+      console.error(error);
+      return;
+    }
+
+    jsonModels.forEach(function(jsonModel)
+    {
+
+    });
+  });
+};
+
 
 
 getModels();

@@ -4,8 +4,8 @@ body {
 
 .state
 {
-  height : 40px;
   border-radius : 33px;
+  background-color: blue;
 }
 
 .state-0
