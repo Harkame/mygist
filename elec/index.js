@@ -1,18 +1,15 @@
+const { shell } = require('electron')
 const ipc = require('electron').ipcRenderer
-const configHelper = require('./lib/config_helper.js')
 let $ = require('jquery');
+let fs = require('fs');
+let request = require('request');
+
+const configHelper = require('./lib/config_helper.js')
 const constants = require('./lib/constants.js')
 
-//require('./models/model.js')
-/*
-let notifyBtn = document.getElementById("btn");
+config = configHelper.readConfig(constants.DEFAULT_CONFIG_PATH);
+destinationPath = config[`destinationPath`];
 
-notifyBtn.addEventListener('click', function(event)
-{
-  ipcRenderer.send('asynchronous-message', 'ping')
-})
-*/
-const { shell } = require('electron')
 $('#btn').on("click", function(event)
 {
   getModels();
@@ -22,11 +19,15 @@ ipc.on('asynchronous-message', (event, arg) =>
   console.log(arg);
 })
 
-function getModels() {
-  //ipcRenderer.send('asynchronous-message', 'ping');
-  //const reponse = ipc.sendSync("synchronous-message", { type: "ping"});
-  //console.log(reponse);
+function getModels()
+{
   let models = [];
+  models.push(new Model())
+  models.push(new Model())
+  models.push(new Model())
+  models.push(new Model())
+  models.push(new Model())
+  models.push(new Model())
   models.push(new Model())
   models.push(new Model())
   models.push(new Model())
@@ -42,25 +43,11 @@ function getModels() {
 
   models.forEach(function(model)
   {
-    /*
     $('#models').append(`
-      <li class="list-group-item">
-        <img id='img-${model.id}' class="col-sm rounded model-img" src="mario.jpg">
-        <p class='col-md' id='name-${model.id}'>${model.name}</p>
-        <button class='col-sm' id='action-${model.id}' type="button" class="btn btn-primary"><i class="fa fa-video-camera"></i> Action</button>
-        <div class='col-sm state-${model.state}' state-${model.state}' class='state state-${model.state}' id='state-${model.id}'>
-          <p>Available<p>
-        </div>
-      </li>
-    `);
-    */
-
-    //<svg class="bd-placeholder-img" width="100%" height="250" xmlns="http://www.w3.org/2000/svg" aria-label="Placeholder: Image" preserveAspectRatio="xMidYMid slice" role="img"><title>Placeholder</title><rect width="100%" height="100%" fill="#868e96"/><text x="50%" y="50%" fill="#dee2e6" dy=".3em">Image</text></svg>
-    $('#models').append(`
-      <div class="card mb-3" style="max-width: 600px;">
+      <div class="card mb-2 item ml-2">
         <div class="row no-gutters">
           <div class="col-md-4">
-            <img class="col-sm rounded" src="mario.jpg">
+            <img class="col-sm rounded" src="./cache/mario.jpg">
           </div>
           <div class="col-md-4">
             <div class="card-body">
@@ -70,8 +57,8 @@ function getModels() {
           <div class="col-md-3">
             <div class="card-body">
               <div class="p-3 mb-2 text-white state state-${model.state}">.bg-primary</div>
-              <button type="button" class="btn btn-primary"><i class="fa fa-video-camera"></i> Action</button>
-              <button style="margin-top:5px;" id="see-${model.id}" type="button" class="btn btn-primary"><i class="fa fa-eye"></i> See</button>
+              <button type="button" class="btn btn-primary m-1"><i class="fa fa-video-camera"></i> Action</button>
+              <button id="see-${model.id}" type="button" class="btn btn-primary m-1"><i class="fa fa-eye"></i> See</button>
             </div>
           </div>
         </div>
@@ -113,8 +100,8 @@ class Model {
 }
 
 
-config = configHelper.readConfig(constants.DEFAULT_CONFIG_PATH);
-destinationPath = config[`destinationPath`];
+getModels();
+
 
 if(!fs.existsSync(destinationPath))
 {
@@ -132,6 +119,7 @@ function main()
 
   config = configHelper.readConfig(constants.DEFAULT_CONFIG_PATH);
 
+  /*
   request({url : searchUrl, json: true}, function(error, result, json)
   {
     if(error)
@@ -145,8 +133,5 @@ function main()
 
     });
   });
+  */
 };
-
-
-
-getModels();

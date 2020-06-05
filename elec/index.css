@@ -1,5 +1,18 @@
 body {
    -webkit-app-region: drag;
+   background-color : #000000;
+   overflow-x: hidden;
+}
+
+.item
+{
+  background-color : #353535;
+  max-width: 600px;
+}
+
+#models
+{
+  color : white;
 }
 
 .state
