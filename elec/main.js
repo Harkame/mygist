@@ -15,7 +15,7 @@ function createWindow ()
   mainWindow = new BrowserWindow({
     width: 800,
     height: 500,
-    title: 'ZdS, ça pulpe !',
+    title: 'StripchatRecorder',
     maximized: false,
     center: true,
     webPreferences:

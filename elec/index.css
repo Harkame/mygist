@@ -15,23 +15,33 @@ body {
   color : white;
 }
 
-.state
+.status
 {
   border-radius : 33px;
   background-color: blue;
 }
 
-.state-0
+.status-off
+{
+  background-color: purple;
+}
+
+.status-public
 {
   background-color: green;
 }
 
-.state-1
+.status-groupShow
 {
-  background-color: yellow;
+  background-color: red;
 }
 
-.state-2
+.status-virtualPrivate
+{
+  background-color: red;
+}
+
+.status-private
 {
   background-color: red;
 }

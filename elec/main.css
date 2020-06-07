@@ -1,0 +1,30 @@
+body {
+   -webkit-app-region: drag;
+}
+
+.state
+{
+  border-radius : 33px;
+  background-color: blue;
+}
+
+.state-0
+{
+  background-color: green;
+}
+
+.state-1
+{
+  background-color: yellow;
+}
+
+.state-2
+{
+  background-color: red;
+}
+
+.model-img
+{
+  width : 166px;
+  height : 88px;
+}
