@@ -7,7 +7,7 @@ body {
 .item
 {
   background-color : #353535;
-  max-width: 600px;
+  width: 600px;
 }
 
 #models
@@ -50,4 +50,16 @@ body {
 {
   width : 166px;
   height : 88px;
+}
+
+.spinner {
+  display: block;
+  position: fixed;
+  z-index: 1031; /* High z-index so it is on top of the page */
+  top: 50%;
+  right: 50%; /* or: left: 50%; */
+  margin-top: -..px; /* half of the elements height */
+  margin-right: -..px; /* half of the elements widht */
+  width: 80px;
+  height : 80px;
 }

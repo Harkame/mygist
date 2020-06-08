@@ -15,7 +15,7 @@ function createWindow ()
   mainWindow = new BrowserWindow({
     width: 800,
     height: 500,
-    title: 'StripchatRecorder',
+    title: 'ModelRecorder',
     maximized: false,
     center: true,
     webPreferences:
@@ -48,8 +48,8 @@ function createWindow ()
 
   mainWindow.webContents.on('did-finish-load', function()
   {
-    //mainWindow.openDevTools();
-    //devToolsOpen = true;
+    mainWindow.openDevTools();
+    devToolsOpen = true;
     /*
     document.querySelector('#btn').addEventListener('click', () => {
         getData()

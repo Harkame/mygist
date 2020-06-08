@@ -2,20 +2,30 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>StripchatRecorder</title>
+    <title>ModelRecorder</title>
     <link rel="stylesheet" href="./contents/bootstrap.min.css" />
     <link rel="stylesheet" href="index.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
   </head>
   <body>
-    <select>
-      <option>Public</option>
-      <option>Private</option>
-      <option>Off</option>
-    </select>
-    <!--<button id="btn" type="button" class="btn btn-primary"><i class="fa fa-refresh"></i> Refresh</button>-->
-    <div id="models" class="row ml-2">
+      <div class="md-form mt-0">
+        <input id="search-models" class="form-control" type="text" placeholder="Search" aria-label="Search">
+      </div>
+      <select id="filter-models" class="custom-select">
+        <option></option>
+        <option>Public</option>
+        <option>Private</option>
+        <option>Off</option>
+      </select>
+      <div id="loading" class="spinner spinner-border text-primary" role="status" style="display : none;">
+        <span class="sr-only">Loading...</span>
+      </div>
+      <!--<button id="btn" type="button" class="btn btn-primary"><i class="fa fa-refresh"></i> Refresh</button>-->
+
+    <div id="models" class="row center-block">
     </div>
+
     <script src="index.js"></script>
   </body>
 </html>

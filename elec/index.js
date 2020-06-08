@@ -4,6 +4,63 @@ let $ = require('jquery');
 let fs = require('fs');
 let request = require('request');
 
+$('#filter-models').change(function(event)
+{
+  let status = $('#filter-models').find(":selected").val();
+  let search = $('#search-models').val()
+
+  manager.filterModels(search, status);
+});
+
+$('#search-models').keyup(function(event)
+{
+  let status = $('#filter-models').find(":selected").val();
+  let search = $('#search-models').val()
+
+  manager.filterModels(search, status);
+});
+
+
+
+class IndexManager
+{
+  constructor() {
+    this.models = [];
+  }
+
+  filterModels(search, status)
+  {
+    showLoading(true);
+
+    let modelsToDisplay = this.models.filter(model =>
+    {
+      let find = true;
+
+      if(find)
+        if(!model.username.includes(search))
+          find = false;
+
+      if(find)
+        if(status != '' )
+          find = model.status.toLowerCase() == status.toLowerCase();
+
+      return find;
+    });
+
+    $('#models').empty();
+
+    console.log(modelsToDisplay);
+
+    modelsToDisplay.forEach(function(model)
+    {
+      displayModel(model);
+    });
+
+    showLoading(false);
+  }
+}
+
+let manager = new IndexManager();
 
 
 const colors = require(`colors`);
@@ -28,11 +85,13 @@ ipc.on('asynchronous-message', (event, arg) =>
 
 function displayModel(model)
 {
+  //<img class="col-sm rounded-circle" src="${model.avatarUrl}">
+
   $('#models').append(`
-    <div class="card mb-2 item ml-2" style="width : 700px; max-width : 700px;">
+    <div class="card mb-2 item ml-2">
       <div class="row no-gutters">
         <div class="col-md-4"  style="width : 260px;">
-          <img class="col-sm rounded-circle" src="${model.avatarUrl}">
+          <img class="col-sm rounded-circle" src="cache/mario.jpg">
         </div>
         <div class="col-md-4">
           <div class="card-body">
@@ -49,9 +108,6 @@ function displayModel(model)
       </div>
     </div>
   `);
-
-  console.log(model);
-  console.log(model.status);
 
   $(`#action-${model.id}`).on('click', function(event)
   {
@@ -96,6 +152,37 @@ function main()
 
   config = configHelper.readConfig(constants.DEFAULT_CONFIG_PATH);
 
+  $('#models').empty();
+
+  let models = [];
+  let model = new Model();
+  model.username = "Tata";
+  model.status = 'off';
+  models.push(model);
+  model = new Model();
+  model.username = "Tata";
+  model.status = 'public';
+  models.push(model);
+  model = new Model();
+  model.username = "Lala";
+  model.status = 'idle';
+  models.push(model);
+  model = new Model();
+  model.username = "Toto";
+  model.status = 'private';
+  models.push(model);
+  model = new Model();
+  model.username = "Titi";
+  model.status = 'off';
+  models.push(model);
+
+  manager.models = models;
+
+  models.forEach(function(model)
+  {
+    displayModel(model);
+  });
+  /*
   let spottedModels = config[`models`];
 
   if(!spottedModels)
@@ -106,8 +193,6 @@ function main()
   let splitedModels = [];
 
   const clone = [...new Set(spottedModels)];
-
-  $('#models').empty();
 
   while(clone.length > 0)
     splitedModels.push(clone.splice(0, MAXIMUM_LENGTH))
@@ -150,18 +235,16 @@ function main()
           console.log(`[${model['status']}] : ${model['username']}`.cyan);
           return;
         }
-
-        /*
-
-        if(!onRecordModels.has(model['username']))
-          onRecordModels.set(model['username'], false);
-
-        if(!onRecordModels.get(model['username']))
-          downloadHelper.download(model, onRecordModels, destinationPath);
-        else
-          console.log(`On download : ${model['username']}`.yellow);
-        */
       });
     });
   });
+  */
 };
+
+function showLoading(show)
+{
+  if(show)
+    $('#loading').show();
+  else
+  $('#loading').hide();
+}
