@@ -6,9 +6,10 @@
     <link rel="stylesheet" href="./contents/bootstrap.min.css" />
     <link rel="stylesheet" href="index.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">-->
   </head>
   <body>
+    <div class="list-inline mx-auto justify-content-center">
       <div class="md-form mt-0">
         <input id="search-models" class="form-control" type="text" placeholder="Search" aria-label="Search">
       </div>
@@ -21,9 +22,11 @@
       <div id="loading" class="spinner spinner-border text-primary" role="status" style="display : none;">
         <span class="sr-only">Loading...</span>
       </div>
+    </div>
       <!--<button id="btn" type="button" class="btn btn-primary"><i class="fa fa-refresh"></i> Refresh</button>-->
-
-    <div id="models" class="row center-block">
+    <div class="list-inline mx-auto justify-content-center">
+      <div id="models" class="row list-inline mx-auto justify-content-center">
+      </div>
     </div>
 
     <script src="index.js"></script>

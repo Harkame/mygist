@@ -1,8 +1,13 @@
-class Model {
+
+class Model
+{
+  var index = 0;
+
   constructor() {
-    this.id = 'id_1';
+    this.id = index++;
   }
   set name(name) {
+    this.id = index++;
     this._name = name.charAt(0).toUpperCase() + name.slice(1);
   }
   get name() {

@@ -1,5 +1,7 @@
 models:
-  - a
+  -
+    username: mario
+    notify: 1
 
 destinationPath:
   stores

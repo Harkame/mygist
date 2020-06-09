@@ -3,6 +3,7 @@ const ipc = require('electron').ipcRenderer
 let $ = require('jquery');
 let fs = require('fs');
 let request = require('request');
+const notifier = require('node-notifier');
 
 $('#filter-models').change(function(event)
 {
@@ -88,12 +89,12 @@ function displayModel(model)
   //<img class="col-sm rounded-circle" src="${model.avatarUrl}">
 
   $('#models').append(`
-    <div class="card mb-2 item ml-2">
+    <div class="card mb-1 item ml-1 mr-1 mt-1">
       <div class="row no-gutters">
         <div class="col-md-4"  style="width : 260px;">
           <img class="col-sm rounded-circle" src="cache/mario.jpg">
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
           <div class="card-body">
             <h5 class="card-title">${model.username}</h5>
           </div>
@@ -103,6 +104,11 @@ function displayModel(model)
             <div class="p-3 mb-2 text-white status status-${model.status}">${model.status}</div>
             <button type="button" class="btn btn-primary m-1"><i class="fa fa-video-camera"></i> Action</button>
             <button id="see-${model.id}" type="button" class="btn btn-primary m-1"><i class="fa fa-eye"></i> See</button>
+          </div>
+        </div>
+        <div class="col-md-1">
+          <div class="card-body">
+            <button id="notify-${model.id}" type="button" class="btn btn-primary m-1"><i class="fa fa-bell"></i> Notify</button>
           </div>
         </div>
       </div>
@@ -122,7 +128,38 @@ function displayModel(model)
 
     shell.openExternal(`google.com`);
   });
+
+  $(`#notify-${model.id}`).on('click', function(event)
+  {
+    /*
+    let notification = notifier.notify(
+    {
+      title: `Is online`,
+      message: `${model.username}`,
+      icon: 'cache/mario.jpg',
+      contentImage: 'cache/mario.jpg',
+      actions: ['Cancel', 'Check'],
+    },
+    function(error, response, metadata)
+    {
+      switch(response)
+      {
+        case 'check':
+          shell.openExternal('https://github.com');
+          break;
+        case 'cancel':
+        break;
+      }
+    });
+    */
+
+    let ymlModel = config['models'].find(function(model){model.username == model.username})
+
+    config[model.username].notify = 1;
+    writeConfig(config);
+  });
 }
+
 var index = 0;
 
 const MAXIMUM_LENGTH = 4;
@@ -158,15 +195,20 @@ function main()
   let model = new Model();
   model.username = "Tata";
   model.status = 'off';
+  model.id = index++;
   models.push(model);
   model = new Model();
   model.username = "Tata";
   model.status = 'public';
+  model.id = index++;
   models.push(model);
   model = new Model();
   model.username = "Lala";
   model.status = 'idle';
+  model.id = index++;
   models.push(model);
+
+  /*
   model = new Model();
   model.username = "Toto";
   model.status = 'private';
@@ -175,6 +217,7 @@ function main()
   model.username = "Titi";
   model.status = 'off';
   models.push(model);
+  */
 
   manager.models = models;
 

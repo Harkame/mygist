@@ -50,11 +50,6 @@ function createWindow ()
   {
     mainWindow.openDevTools();
     devToolsOpen = true;
-    /*
-    document.querySelector('#btn').addEventListener('click', () => {
-        getData()
-    })
-    */
   });
 
   mainWindow.on('closed', () =>
