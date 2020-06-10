@@ -6,8 +6,8 @@ module.exports = {
   {
     return YAML.parse(fs.readFileSync(configPath, `utf8`));
   },
-  writeConfig : function readConfig(config, configPath)
+  writeConfig : function readConfig(configPath, config)
   {
-    return fs.writeFileSync(configPath, config, 'utf8');
+    return fs.writeFileSync(configPath, YAML.stringify(config), 'utf8');
   }
 };

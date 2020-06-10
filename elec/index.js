@@ -4,6 +4,7 @@ let $ = require('jquery');
 let fs = require('fs');
 let request = require('request');
 const notifier = require('node-notifier');
+const moment = require('moment');
 
 $('#filter-models').change(function(event)
 {
@@ -84,12 +85,48 @@ ipc.on('asynchronous-message', (event, arg) =>
   console.log(arg);
 })
 
+function updateDisplayModel(model)
+{
+  let card = $(`#card-${model.id}`);
+
+  if(card.length === 0)
+  {
+    return false;
+  }
+
+  let ymlModel = config['models'].find(function(modelRow)
+  {
+    return modelRow.username == model.username;
+  });
+
+  if(!ymlModel)
+    ymlModel = {};
+
+  if(ymlModel.notify === 0)
+    card.find(`#notify-${model.id}`).addClass('btn-notify-disabled').removeClass('btn-notify-enabled');
+  else
+    card.find(`#notify-${model.id}`).addClass('btn-notify-enabled').removeClass('btn-notify-disabled');
+
+  return true;
+}
+
 function displayModel(model)
 {
   //<img class="col-sm rounded-circle" src="${model.avatarUrl}">
 
+  if(updateDisplayModel(model))
+    return;
+
+  let ymlModel = config['models'].find(function(modelRow)
+  {
+    return modelRow.username == model.username;
+  });
+
+  if(!ymlModel)
+    ymlModel = {};
+
   $('#models').append(`
-    <div class="card mb-1 item ml-1 mr-1 mt-1">
+    <div id="card-${model.id}" class="card mb-1 item ml-1 mr-1 mt-1">
       <div class="row no-gutters">
         <div class="col-md-4"  style="width : 260px;">
           <img class="col-sm rounded-circle" src="cache/mario.jpg">
@@ -108,7 +145,7 @@ function displayModel(model)
         </div>
         <div class="col-md-1">
           <div class="card-body">
-            <button id="notify-${model.id}" type="button" class="btn btn-primary m-1"><i class="fa fa-bell"></i> Notify</button>
+            <button id="notify-${model.id}" type="button" class="btn btn-primary m-1 btn-notify-${ymlModel.notify == 1 ? "enabled" : "disabled"}"><i class="fa fa-bell"></i> Notify</button>
           </div>
         </div>
       </div>
@@ -131,32 +168,30 @@ function displayModel(model)
 
   $(`#notify-${model.id}`).on('click', function(event)
   {
-    /*
-    let notification = notifier.notify(
+    let index = -1;
+
+    config['models'].forEach(function(modelRow, indexRow)
     {
-      title: `Is online`,
-      message: `${model.username}`,
-      icon: 'cache/mario.jpg',
-      contentImage: 'cache/mario.jpg',
-      actions: ['Cancel', 'Check'],
-    },
-    function(error, response, metadata)
-    {
-      switch(response)
-      {
-        case 'check':
-          shell.openExternal('https://github.com');
-          break;
-        case 'cancel':
-        break;
-      }
+      if(modelRow.username.toLowerCase() === model.username.toLowerCase())
+        index = indexRow;
     });
-    */
 
-    let ymlModel = config['models'].find(function(model){model.username == model.username})
+    if(index === -1)
+    {
+      ymlModel = {};
+      ymlModel.username = model.username
+      ymlModel.notify = 1;
+      config['models'].push(ymlModel);
+    }
+    else
+      if(config['models'][index].notify === 0)
+        config['models'][index].notify = 1;
+      else
+        config['models'][index].notify = 0;
 
-    config[model.username].notify = 1;
-    writeConfig(config);
+    configHelper.writeConfig(constants.DEFAULT_CONFIG_PATH, config);
+
+    displayModel(model);
   });
 }
 
@@ -181,12 +216,92 @@ if(!fs.existsSync(destinationPath))
 
 main();
 
-//let refreshIntervalId = setInterval(main, 30000);
+let refreshIntervalId = setInterval(checkNotifications, 30000);
+
+
+function checkNotifications()
+{
+    let models = [];
+    let model = new Model();
+    model.username = "Tata";
+    model.status = 'off';
+    model.id = index++;
+    models.push(model);
+    model = new Model();
+    model.username = "Toto";
+    model.status = 'public';
+    model.id = index++;
+    models.push(model);
+    model = new Model();
+    model.username = "Lala";
+    model.status = 'public';
+    model.id = index++;
+    models.push(model);
+
+    models.forEach(function(model)
+    {
+      checkNotification(model);
+    });
+}
+
+function checkNotification(model)
+{
+  if(model.status !== 'public')
+    return;
+  let index = -1;
+
+  config['models'].forEach(function(modelRow, indexRow)
+  {
+    if(modelRow.username.toLowerCase() === model.username.toLowerCase())
+      index = indexRow;
+  });
+
+  let ymlModel = {};
+
+  if(index !== -1)
+    ymlModel = config['models'][index];
+
+  let notificationDate = moment('1970-01-01');
+  let now = moment();
+
+  if(ymlModel.notificationDate)
+    notificationDate = moment(ymlModel.notificationDate);
+
+  if(now.diff(notificationDate, 'hours') > 6)
+  {
+    notifier.notify(
+    {
+      title: `Is online`,
+      message: `${model.username}`,
+      icon: 'cache/mario.jpg',
+      contentImage: 'cache/mario.jpg',
+      actions: ['Cancel', 'Check'],
+    },
+    function(error, response, metadata)
+    {
+      switch(response)
+      {
+        case 'check':
+          shell.openExternal('https://github.com');
+          break;
+        case 'cancel':
+        break;
+      }
+    });
+
+    if(index !== -1)
+      config['models'][index].notificationDate = now.toJSON();
+    else
+    {
+
+    }
+
+    configHelper.writeConfig(constants.DEFAULT_CONFIG_PATH, config);
+  }
+}
 
 function main()
 {
-  console.log(`---------------`);
-
   config = configHelper.readConfig(constants.DEFAULT_CONFIG_PATH);
 
   $('#models').empty();
@@ -198,13 +313,13 @@ function main()
   model.id = index++;
   models.push(model);
   model = new Model();
-  model.username = "Tata";
+  model.username = "Toto";
   model.status = 'public';
   model.id = index++;
   models.push(model);
   model = new Model();
   model.username = "Lala";
-  model.status = 'idle';
+  model.status = 'public';
   model.id = index++;
   models.push(model);
 
