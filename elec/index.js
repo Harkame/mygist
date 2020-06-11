@@ -1,10 +1,32 @@
 const { shell } = require('electron')
 const ipc = require('electron').ipcRenderer
-let $ = require('jquery');
-let fs = require('fs');
-let request = require('request');
+const fs = require('fs');
+const request = require('request');
 const notifier = require('node-notifier');
 const moment = require('moment');
+const $ = require('jquery');
+const colors = require(`colors`);
+const path = require(`path`);
+
+const constants = require('./lib/constants.js')
+const configHelper = require('./lib/config_helper.js')
+const downloadHelper = require('./lib/download_helper.js')
+const urlHelper = require('./lib/url_helper.js')
+
+const Model = require('./core/model.js');
+const IndexManager = require('./core/index_manager.js')
+
+var index = 0;
+
+const MAXIMUM_LENGTH = 4;
+
+var onRecordModels = new Map();
+let destinationPath;
+
+const manager = new IndexManager();
+
+config = configHelper.readConfig(constants.DEFAULT_CONFIG_PATH);
+destinationPath = config[`destinationPath`];
 
 $('#filter-models').change(function(event)
 {
@@ -22,64 +44,6 @@ $('#search-models').keyup(function(event)
   manager.filterModels(search, status);
 });
 
-
-
-class IndexManager
-{
-  constructor() {
-    this.models = [];
-  }
-
-  filterModels(search, status)
-  {
-    showLoading(true);
-
-    let modelsToDisplay = this.models.filter(model =>
-    {
-      let find = true;
-
-      if(find)
-        if(!model.username.includes(search))
-          find = false;
-
-      if(find)
-        if(status != '' )
-          find = model.status.toLowerCase() == status.toLowerCase();
-
-      return find;
-    });
-
-    $('#models').empty();
-
-    console.log(modelsToDisplay);
-
-    modelsToDisplay.forEach(function(model)
-    {
-      displayModel(model);
-    });
-
-    showLoading(false);
-  }
-}
-
-let manager = new IndexManager();
-
-
-const colors = require(`colors`);
-const path = require(`path`);
-
-const constants = require('./lib/constants.js')
-
-const configHelper = require('./lib/config_helper.js')
-const downloadHelper = require('./lib/download_helper.js')
-const urlHelper = require('./lib/url_helper.js')
-
-const Model = require('./core/model.js');
-
-$('#btn').on("click", function(event)
-{
-  getModels();
-});
 ipc.on('asynchronous-message', (event, arg) =>
 {
   console.log(arg);
@@ -129,18 +93,18 @@ function displayModel(model)
     <div id="card-${model.id}" class="card mb-1 item ml-1 mr-1 mt-1">
       <div class="row no-gutters">
         <div class="col-md-4"  style="width : 260px;">
-          <img class="col-sm rounded-circle" src="cache/mario.jpg">
+          <img id="img-${model.id}" class="col-sm rounded-circle" src="cache/mario.jpg">
         </div>
         <div class="col-md-3">
           <div class="card-body">
-            <h5 class="card-title">${model.username}</h5>
+            <h4>${model.username}</h4>
           </div>
         </div>
         <div class="col-md-3">
           <div class="card-body">
-            <div class="p-3 mb-2 text-white status status-${model.status}">${model.status}</div>
-            <button type="button" class="btn btn-primary m-1"><i class="fa fa-video-camera"></i> Action</button>
-            <button id="see-${model.id}" type="button" class="btn btn-primary m-1"><i class="fa fa-eye"></i> See</button>
+            <div class="p-3 mb-2 text-white status status-${model.status}" style="text-align: center;"><h6 class="mb-0">${model.status.toUpperCase()}</h6></div>
+            <button type="button" class="btn btn-primary m-1" style="width : 100px"><i class="fa fa-video-camera"></i> Action</button>
+            <button id="see-${model.id}" type="button" class="btn btn-primary m-1" style="width : 100px"><i class="fa fa-eye"></i> See</button>
           </div>
         </div>
         <div class="col-md-1">
@@ -193,17 +157,23 @@ function displayModel(model)
 
     displayModel(model);
   });
+
+  $(`#img-${model.id}`).on('mouseover', function(event)
+  {
+    $(`#img-${model.id}`).attr('src', 'cache/luigi.jpg');
+  });
+
+  $(`#img-${model.id}`).on('mouseout', function(event)
+  {
+    $(`#img-${model.id}`).attr('src', 'cache/mario.jpg');
+  });
 }
 
-var index = 0;
 
-const MAXIMUM_LENGTH = 4;
+main();
 
-var onRecordModels = new Map();
-let destinationPath;
+let refreshIntervalId = setInterval(checkNotifications, 30000);
 
-config = configHelper.readConfig(constants.DEFAULT_CONFIG_PATH);
-destinationPath = config[`destinationPath`];
 
 
 if(!fs.existsSync(destinationPath))
@@ -213,11 +183,6 @@ if(!fs.existsSync(destinationPath))
           console.error(error);
   });
 }
-
-main();
-
-let refreshIntervalId = setInterval(checkNotifications, 30000);
-
 
 function checkNotifications()
 {

@@ -6,8 +6,8 @@ models:
     notificationDate: 2020-06-10T11:24:33.308Z
   - username: Lala
     notify: 1
-    notificationDate: 2020-06-10T11:30:53.407Z
+    notificationDate: 2020-06-11T08:17:52.951Z
   - username: Toto
-    notify: 1
-    notificationDate: 2020-06-10T11:44:44.692Z
+    notify: 0
+    notificationDate: 2020-06-11T08:17:52.928Z
 destinationPath: product
