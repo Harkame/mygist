@@ -63,18 +63,6 @@ function createWindow ()
 
 const template =
 [
-  {
-    label: 'Models',
-  },
-  {
-    label: 'Settings',
-    submenu:
-    [
-      {
-        role: 'About'
-      }
-    ]
-  },
 ]
 
 const menu = Menu.buildFromTemplate(template)

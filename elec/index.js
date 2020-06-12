@@ -93,7 +93,7 @@ function displayModel(model)
     <div id="card-${model.id}" class="card mb-1 item ml-1 mr-1 mt-1">
       <div class="row no-gutters">
         <div class="col-md-4"  style="width : 260px;">
-          <img id="img-${model.id}" class="col-sm rounded-circle" src="cache/mario.jpg">
+          <img id="img-${model.id}" isloading=false class="col-sm rounded-circle" src="cache/mario.jpg"/>
         </div>
         <div class="col-md-3">
           <div class="card-body">
@@ -160,27 +160,13 @@ function displayModel(model)
 
   $(`#img-${model.id}`).on('mouseover', function(event)
   {
-    $(`#img-${model.id}`).attr('src', 'cache/luigi.jpg');
+    $(`#img-${model.id}`).attr('isloading', true);
+    getCurrentImagePreview(model);
   });
 
   $(`#img-${model.id}`).on('mouseout', function(event)
   {
-    $(`#img-${model.id}`).attr('src', 'cache/mario.jpg');
-  });
-}
-
-
-main();
-
-let refreshIntervalId = setInterval(checkNotifications, 30000);
-
-
-
-if(!fs.existsSync(destinationPath))
-{
-  fs.mkdirSync(destinationPath, 0766, function(error){
-      if(error)
-          console.error(error);
+    $(`#img-${model.id}`).attr('isloading', false).attr('src', 'cache/mario.jpg');
   });
 }
 
@@ -288,80 +274,12 @@ function main()
   model.id = index++;
   models.push(model);
 
-  /*
-  model = new Model();
-  model.username = "Toto";
-  model.status = 'private';
-  models.push(model);
-  model = new Model();
-  model.username = "Titi";
-  model.status = 'off';
-  models.push(model);
-  */
-
   manager.models = models;
 
   models.forEach(function(model)
   {
     displayModel(model);
   });
-  /*
-  let spottedModels = config[`models`];
-
-  if(!spottedModels)
-    return;
-
-  spottedModels = spottedModels.map(item => item ? item.toLowerCase() : "");
-
-  let splitedModels = [];
-
-  const clone = [...new Set(spottedModels)];
-
-  while(clone.length > 0)
-    splitedModels.push(clone.splice(0, MAXIMUM_LENGTH))
-
-  splitedModels.forEach(function(array)
-  {
-    let searchUrl = urlHelper.createSearchUrl(array);
-
-    request({url : searchUrl, json: true}, function(error, result, json)
-    {
-      if(error)
-      {
-        console.error(error);
-        return;
-      }
-
-      if(!json)
-        return;
-
-      let jsonModels = json[`models`];
-
-      if(!jsonModels)
-        return;
-
-
-      jsonModels.forEach(function(jsonModel)
-      {
-        let model = Object.assign(new Model, jsonModel);
-
-        if(spottedModels.indexOf(model['username'].toLowerCase()) == -1)
-          return;
-
-        displayModel(model);
-
-        if(model[`status`] == 'off')
-          return;
-
-        if(model['status'] != `public`)
-        {
-          console.log(`[${model['status']}] : ${model['username']}`.cyan);
-          return;
-        }
-      });
-    });
-  });
-  */
 };
 
 function showLoading(show)
@@ -370,4 +288,30 @@ function showLoading(show)
     $('#loading').show();
   else
   $('#loading').hide();
+}
+
+
+main();
+
+let refreshIntervalId = setInterval(checkNotifications, 30000);
+
+if(!fs.existsSync(destinationPath))
+{
+  fs.mkdirSync(destinationPath, 0700, function(error){
+      if(error)
+          console.error(error);
+  });
+}
+
+function getCurrentImagePreview(model)
+{
+  $(`#img-${model.id}[isloading=true]`).attr('src', 'cache/luigi.jpg');
+  /*
+  request({url : searchUrl, json: true}, function(error, result, json)
+  {
+    //TODO
+  });
+  */
+
+
 }
