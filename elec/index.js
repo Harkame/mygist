@@ -49,6 +49,29 @@ ipc.on('asynchronous-message', (event, arg) =>
   console.log(arg);
 })
 
+$('#exampleModal').on('shown.bs.modal', function () {
+  $('#exampleInputEmail1').focus();
+})
+
+$('#form-add').submit(function(event)
+{
+  console.log("submit");
+
+  if(false) //model don't exist
+  {
+    alert("No model found for this name/URL");
+    $('#exampleInputEmail1').focus();
+  }
+
+  let ymlModel = {};
+  ymlModel.username = $('#model-username').val();
+  config['models'].push(ymlModel);
+  configHelper.writeConfig(constants.DEFAULT_CONFIG_PATH, config);
+
+
+  return true;
+});
+
 function updateDisplayModel(model)
 {
   let card = $(`#card-${model.id}`);
