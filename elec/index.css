@@ -53,12 +53,22 @@ body {
   height : 88px;
 }
 
-.btn-notify-enabled
-{
-  background-color : blue;
-}
 
-.btn-notify-disabled
-{
-  background-color : grey;
+</*
+.btn-primary.btn-notify-disabled {
+  background-color: #8064A2; !important;
+  border-color: #8064A2; !important;
+}
+.btn-primary.btn-notify-disabled:hover,
+.btn-primary.btn-notify-disabled:active,
+.btn-primary.btn-notify-disabled:visited
+.btn-primary.btn-notify-disabled:focus {
+  background-color: DarkBlue !important;
+  border-color: DarkBlue !important;
+}
+*/
+
+.btn:focus {
+  outline: none;
+  box-shadow: none;
 }

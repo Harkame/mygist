@@ -11,13 +11,18 @@
     <link rel="stylesheet" href="index.css" />
   </head>
   <body>
-    <div class="list-inline mx-auto justify-content-center" style="width : 50%;">
+    <div class="list-inline mx-auto justify-content-center" style="width : 50%; text-align : center;">
       <input id="search-models" class="form-control mt-1 mb-1" type="text" placeholder="Search" aria-label="Search">
       <select id="filter-models" class="custom-select mt-1 mb-1">
-        <option></option>
+        <option value="" selected>Status</option>
         <option>Public</option>
         <option>Private</option>
         <option>Off</option>
+      </select>
+      <select id="filter-record-models" class="custom-select mt-1 mb-1">
+        <option value="" selected>On record</option>
+        <option>No</option>
+        <option>Yes</option>
       </select>
       <div id="loading" class="spinner spinner-border text-primary" role="status" style="display : none;">
         <span class="sr-only">Loading...</span>

@@ -15,6 +15,7 @@ const urlHelper = require('./lib/url_helper.js')
 
 const Model = require('./core/model.js');
 const IndexManager = require('./core/index_manager.js')
+const ConfigManager = require('./core/config_manager')
 
 var index = 0;
 
@@ -24,6 +25,7 @@ var onRecordModels = new Map();
 let destinationPath;
 
 const manager = new IndexManager();
+const configManager = new ConfigManager();
 
 config = configHelper.readConfig(constants.DEFAULT_CONFIG_PATH);
 destinationPath = config[`destinationPath`];
@@ -90,9 +92,9 @@ function updateDisplayModel(model)
     ymlModel = {};
 
   if(ymlModel.notify === 0)
-    card.find(`#notify-${model.id}`).addClass('btn-notify-disabled').removeClass('btn-notify-enabled');
+    card.find(`#notify-${model.id}`).addClass('btn-secondary').removeClass('btn-primary');
   else
-    card.find(`#notify-${model.id}`).addClass('btn-notify-enabled').removeClass('btn-notify-disabled');
+    card.find(`#notify-${model.id}`).addClass('btn-primary').removeClass('btn-secondary');
 
   return true;
 }
@@ -132,7 +134,7 @@ function displayModel(model)
         </div>
         <div class="col-md-1">
           <div class="card-body">
-            <button id="notify-${model.id}" type="button" class="btn btn-primary m-1 btn-notify-${ymlModel.notify == 1 ? "enabled" : "disabled"}"><i class="fa fa-bell"></i> Notify</button>
+            <button id="notify-${model.id}" type="button" class="btn btn-primary m-1"><i class="fa fa-bell"></i> Notify</button>
           </div>
         </div>
       </div>
@@ -144,6 +146,7 @@ function displayModel(model)
     console.log("onclick");
 
     shell.openExternal('https://github.com');
+    this.blur();
   });
 
   $(`#see-${model.id}`).on('click', function(event)
@@ -151,10 +154,12 @@ function displayModel(model)
     console.log("onclick");
 
     shell.openExternal(`google.com`);
+    this.blur();
   });
 
   $(`#notify-${model.id}`).on('click', function(event)
   {
+    this.blur();
     let index = -1;
 
     config['models'].forEach(function(modelRow, indexRow)
@@ -193,6 +198,7 @@ function displayModel(model)
   });
 }
 
+/*
 function checkNotifications()
 {
     let models = [];
@@ -273,6 +279,7 @@ function checkNotification(model)
     configHelper.writeConfig(constants.DEFAULT_CONFIG_PATH, config);
   }
 }
+*/
 
 function main()
 {
@@ -316,7 +323,7 @@ function showLoading(show)
 
 main();
 
-let refreshIntervalId = setInterval(checkNotifications, 30000);
+//let refreshIntervalId = setInterval(checkNotifications, 30000);
 
 if(!fs.existsSync(destinationPath))
 {
