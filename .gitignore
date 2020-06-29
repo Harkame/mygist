@@ -1,2 +1,6 @@
 node_modules
 elec-win32-x64
+.exe
+.msi
+*.exe*
+dist/
