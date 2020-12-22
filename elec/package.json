@@ -19,7 +19,7 @@
     "jquery": "^3.5.1",
     "jsdom": "^16.2.2",
     "moment": "^2.26.0",
-    "node-notifier": "^7.0.1",
+    "node-notifier": "^8.0.1",
     "request": "^2.88.2",
     "yaml": "^1.10.0"
   },
